@@ -1,5 +1,12 @@
 import type { LateResourceModule } from "../types";
-import { buildMediaFilesField } from "../utils/commonFields";
+import {
+  buildMediaInputModeField,
+  buildBinaryPropertyField,
+} from "../utils/commonFields";
+import {
+  mediaUploadPreSend,
+  handleApiErrorResponse,
+} from "../utils/routingHooks";
 
 export const mediaResource: LateResourceModule = {
   operations: [
@@ -14,7 +21,17 @@ export const mediaResource: LateResourceModule = {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          body: "={{ $parameter.files?.items?.reduce((acc, item) => { acc[`file_${Date.now()}_${Math.random()}`] = { value: item.data, options: { filename: item.filename || 'upload', contentType: item.mimeType || 'application/octet-stream' } }; return acc; }, {}) || {} }}",
+          // Enable full response so postReceive can inspect status codes
+          ignoreHttpStatusErrors: true,
+          returnFullResponse: true,
+        },
+        send: {
+          // preSend hook constructs the FormData body with proper binary data
+          // handling. Supports both filesystem-v2 and default binary modes.
+          preSend: [mediaUploadPreSend],
+        },
+        output: {
+          postReceive: [handleApiErrorResponse],
         },
       },
     },
@@ -36,9 +53,90 @@ export const mediaResource: LateResourceModule = {
   ],
 
   fields: [
-    buildMediaFilesField("media", ["upload"]),
+    // Input mode toggle: binary (default, works with filesystem-v2) vs manual (base64)
+    buildMediaInputModeField("media", ["upload"]),
 
-    // Presign fields
+    // Binary property name field (shown only in binary mode)
+    buildBinaryPropertyField("media", ["upload"]),
+
+    // Manual files field (shown only in manual mode for backward compatibility)
+    {
+      displayName: "Files",
+      name: "files",
+      type: "fixedCollection",
+      default: { items: [] },
+      typeOptions: {
+        multipleValues: true,
+        sortable: true,
+      },
+      displayOptions: {
+        show: {
+          resource: ["media"],
+          operation: ["upload"],
+          inputMode: ["manual"],
+        },
+      },
+      description:
+        "Files to upload for use in posts. Supports images (JPEG, PNG, WebP, GIF) and videos (MP4, MOV, AVI, WebM) up to 5GB.",
+      required: true,
+      options: [
+        {
+          name: "items",
+          displayName: "Files",
+          values: [
+            {
+              displayName: "Filename",
+              name: "filename",
+              type: "string",
+              default: "",
+              description: "Name of the file including extension",
+              placeholder: "image.jpg",
+              required: true,
+            },
+            {
+              displayName: "File Data",
+              name: "data",
+              type: "string",
+              default: "",
+              description: "Base64 encoded file data",
+              placeholder: "data:image/jpeg;base64,/9j/4AAQSkZJRgABA...",
+              required: true,
+            },
+            {
+              displayName: "MIME Type",
+              name: "mimeType",
+              type: "options",
+              options: [
+                { name: "JPEG Image", value: "image/jpeg" },
+                { name: "PNG Image", value: "image/png" },
+                { name: "WebP Image", value: "image/webp" },
+                { name: "GIF Image", value: "image/gif" },
+                { name: "MP4 Video", value: "video/mp4" },
+                { name: "MOV Video", value: "video/quicktime" },
+                { name: "AVI Video", value: "video/x-msvideo" },
+                { name: "WebM Video", value: "video/webm" },
+                { name: "PDF Document", value: "application/pdf" },
+                { name: "Other", value: "application/octet-stream" },
+              ],
+              default: "image/jpeg",
+              description: "MIME type of the file",
+              required: true,
+            },
+            {
+              displayName: "File Size (bytes)",
+              name: "fileSize",
+              type: "number",
+              default: 0,
+              description:
+                "Size of the file in bytes (optional, for validation)",
+              placeholder: "1048576",
+            },
+          ],
+        },
+      ],
+    },
+
+    // Presign fields (unchanged)
     {
       displayName: "Filename",
       name: "filename",

@@ -303,6 +303,82 @@ export function buildSelectorField(
 }
 
 /**
+ * Builds the input mode selector for media upload.
+ * Lets users choose between binary input from previous nodes (default, works
+ * with all n8n binary data modes including filesystem-v2) and manual base64
+ * entry for direct data pasting.
+ *
+ * @param resource - The resource name (e.g., "media")
+ * @param operations - Operations where this field should appear (e.g., ["upload"])
+ * @returns INodeProperties for the input mode selector
+ */
+export function buildMediaInputModeField(
+  resource: string,
+  operations: string[]
+): INodeProperties {
+  return {
+    displayName: "Input Mode",
+    name: "inputMode",
+    type: "options",
+    options: [
+      {
+        name: "Binary Input",
+        value: "binary",
+        description:
+          "Use binary data from a previous node (e.g., Read Binary File, HTTP Request, Telegram)",
+      },
+      {
+        name: "Manual (Base64 Data)",
+        value: "manual",
+        description: "Enter file data as base64 encoded strings",
+      },
+    ],
+    default: "binary",
+    displayOptions: {
+      show: {
+        resource: [resource],
+        operation: operations,
+      },
+    },
+    description:
+      'How to provide file data. Use "Binary Input" when files come from previous nodes (recommended). Use "Manual" to paste base64 encoded data directly.',
+    required: true,
+  };
+}
+
+/**
+ * Builds the binary property name field for binary input mode.
+ * Users specify which binary property from the incoming n8n item to read.
+ * Most n8n nodes output binary data under the property name "data" by default.
+ *
+ * @param resource - The resource name (e.g., "media")
+ * @param operations - Operations where this field should appear (e.g., ["upload"])
+ * @returns INodeProperties for the binary property name input
+ */
+export function buildBinaryPropertyField(
+  resource: string,
+  operations: string[]
+): INodeProperties {
+  return {
+    displayName: "Binary Property",
+    name: "binaryPropertyName",
+    type: "string",
+    default: "data",
+    displayOptions: {
+      show: {
+        resource: [resource],
+        operation: operations,
+        inputMode: ["binary"],
+      },
+    },
+    description:
+      'Name of the binary property from the incoming item. Most nodes output binary data as "data". Check the output of the previous node if uploads fail.',
+    placeholder: "data",
+    required: true,
+  };
+}
+
+/**
  * Builds media upload files field
  */
 export function buildMediaFilesField(
