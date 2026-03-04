@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2] - 2026-03-04
+
+### Changes
+- Merge pull request #19 from getlate-dev/fix/media-upload-binary-filesystem-v2
+- fix: support binary data uploads in filesystem-v2 mode
+
+
 ## [0.3.1] - 2026-02-12
 
 ### Changes
