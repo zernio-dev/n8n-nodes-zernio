@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-late",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "n8n community node for LATE API - Schedule and manage social media posts across 13 platforms: Twitter/X, Instagram, Facebook, LinkedIn, TikTok, YouTube, Threads, Bluesky, Pinterest, Reddit, Telegram, Google Business, and Snapchat",
   "main": "dist/index.js",
   "scripts": {

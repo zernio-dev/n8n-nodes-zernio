@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.3] - 2026-03-17
+
+### Changes
+- fix: update all getlate.dev URLs to zernio.com
+
+
 ## [0.3.2] - 2026-03-04
 
 ### Changes
