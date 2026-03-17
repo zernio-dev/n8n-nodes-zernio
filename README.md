@@ -1,6 +1,6 @@
 # n8n-nodes-late
 
-<img src="https://raw.githubusercontent.com/zernio-dev/n8n-nodes-zernio/master/late/late-logo.png" alt="LATE Logo" width="200"/>
+<img src="https://zernio.com/brand/logo-primary.png" alt="Zernio Logo" width="200"/>
 
 An n8n community node for the [Zernio API](https://zernio.com) - the professional social media management platform.
 
@@ -21,7 +21,7 @@ An n8n community node for the [Zernio API](https://zernio.com) - the professiona
 
 ## Version History
 
-- **1.0.0** - Initial release with comprehensive LATE API integration
+- **1.0.0** - Initial release with comprehensive Zernio API integration
 
 ## Installation
 
@@ -30,7 +30,7 @@ An n8n community node for the [Zernio API](https://zernio.com) - the professiona
 1. Go to **Settings** → **Community Nodes** in your n8n instance
 2. Select **Install** and enter `n8n-nodes-late`
 3. Click **Install** and restart n8n
-4. The LATE node will appear in your node palette
+4. The Zernio node will appear in your node palette
 
 ### From npm
 
@@ -49,15 +49,15 @@ npm run build
 
 ## Prerequisites
 
-1. **LATE Account**: Sign up at [zernio.com](https://zernio.com)
-2. **API Key**: Generate an API key from your LATE dashboard
-3. **Social Accounts**: Connect your social media accounts to LATE profiles
+1. **Zernio Account**: Sign up at [zernio.com](https://zernio.com)
+2. **API Key**: Generate an API key from your Zernio dashboard
+3. **Social Accounts**: Connect your social media accounts to Zernio profiles
 
 ## Credentials Setup
 
 1. Add a new credential in n8n
-2. Search for "LATE API"
-3. Enter your API key from the LATE dashboard
+2. Search for "Zernio API"
+3. Enter your API key from the Zernio dashboard
 
 ## Quick Start
 
@@ -407,7 +407,7 @@ Available webhook events:
 
 ## Plan Limits
 
-LATE enforces usage limits based on your plan:
+Zernio enforces usage limits based on your plan:
 
 - **Free**: 10 posts/month, 2 Social Sets - $0/mo
 - **Build**: 120 posts/month, 10 Social Sets - $13/mo (billed yearly)
@@ -468,7 +468,6 @@ Contributions are welcome! Please read our contributing guidelines and submit pu
 
 ---
 
-**Made with love by the LATE team**
+**Made with love by the Zernio team**
 
 [Website](https://zernio.com) | [Documentation](https://docs.zernio.com) | [Dashboard](https://zernio.com/dashboard)
-
