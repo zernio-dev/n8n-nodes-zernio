@@ -41,17 +41,17 @@
   ],
   "author": {
     "name": "LATE",
-    "email": "miki@getlate.dev",
-    "url": "https://getlate.dev"
+    "email": "miki@zernio.com",
+    "url": "https://zernio.com"
   },
   "license": "MIT",
-  "homepage": "https://github.com/getlatedev/n8n-nodes-late#readme",
+  "homepage": "https://github.com/zernio-dev/n8n-nodes-zernio#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/getlatedev/n8n-nodes-late.git"
+    "url": "https://github.com/zernio-dev/n8n-nodes-zernio.git"
   },
   "bugs": {
-    "url": "https://github.com/getlatedev/n8n-nodes-late/issues"
+    "url": "https://github.com/zernio-dev/n8n-nodes-zernio/issues"
   },
   "n8n": {
     "n8nNodesApiVersion": 1,

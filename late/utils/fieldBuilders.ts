@@ -115,7 +115,7 @@ export function buildMediaItemsField(): INodeProperties {
             description:
               "URL of the uploaded media file from the /v1/media endpoint. You can use expressions like ={{ 'https://' + $json.data.color + '.com' }}",
             placeholder:
-              "https://getlate.dev/api/v1/media/uploaded-file-url.jpg",
+              "https://zernio.com/api/v1/media/uploaded-file-url.jpg",
             required: true,
           },
           {

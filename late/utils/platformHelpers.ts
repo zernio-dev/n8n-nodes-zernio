@@ -77,13 +77,13 @@ export async function loadPlatformAccounts(
       "lateApi",
       {
         method: "GET",
-        url: "https://getlate.dev/api/v1/accounts",
+        url: "https://zernio.com/api/v1/accounts",
         json: true,
       }
     );
 
     if (!response?.accounts) {
-      return [{ name: `No ${platform} accounts found - connect at getlate.dev first`, value: "none" }];
+      return [{ name: `No ${platform} accounts found - connect at zernio.com first`, value: "none" }];
     }
 
     const platformAccounts = response.accounts.filter(
@@ -91,7 +91,7 @@ export async function loadPlatformAccounts(
     );
 
     if (platformAccounts.length === 0) {
-      return [{ name: `No ${platform} accounts connected - connect at getlate.dev first`, value: "none" }];
+      return [{ name: `No ${platform} accounts connected - connect at zernio.com first`, value: "none" }];
     }
 
     const platformConfig = SUPPORTED_PLATFORMS.find(

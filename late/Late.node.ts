@@ -73,7 +73,7 @@ export class Late implements INodeType {
     ],
 
     requestDefaults: {
-      baseURL: "https://getlate.dev/api/v1",
+      baseURL: "https://zernio.com/api/v1",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",

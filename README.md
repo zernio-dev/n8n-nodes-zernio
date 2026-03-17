@@ -1,8 +1,8 @@
 # n8n-nodes-late
 
-<img src="https://raw.githubusercontent.com/getlatedev/n8n-nodes-late/master/late/late-logo.png" alt="LATE Logo" width="200"/>
+<img src="https://raw.githubusercontent.com/zernio-dev/n8n-nodes-zernio/master/late/late-logo.png" alt="LATE Logo" width="200"/>
 
-An n8n community node for the [LATE API](https://getlate.dev) - the professional social media management platform.
+An n8n community node for the [Zernio API](https://zernio.com) - the professional social media management platform.
 
 **Schedule and manage social media posts across multiple platforms:**
 - 🐦 **Twitter/X** - Posts, threads, and automation
@@ -41,7 +41,7 @@ npm install n8n-nodes-late
 ### From Source
 
 ```bash
-git clone https://github.com/getlatedev/n8n-nodes-late.git
+git clone https://github.com/zernio-dev/n8n-nodes-zernio.git
 cd n8n-nodes-late
 npm install
 npm run build
@@ -49,7 +49,7 @@ npm run build
 
 ## Prerequisites
 
-1. **LATE Account**: Sign up at [getlate.dev](https://getlate.dev)
+1. **LATE Account**: Sign up at [zernio.com](https://zernio.com)
 2. **API Key**: Generate an API key from your LATE dashboard
 3. **Social Accounts**: Connect your social media accounts to LATE profiles
 
@@ -439,7 +439,7 @@ Check the node output for detailed error messages and upgrade suggestions.
 
 ### Setup
 ```bash
-git clone https://github.com/getlatedev/n8n-nodes-late.git
+git clone https://github.com/zernio-dev/n8n-nodes-zernio.git
 cd n8n-nodes-late
 npm install
 npm run build
@@ -453,10 +453,10 @@ npm run lintfix     # Fix automatically
 
 ## Support
 
-- **Documentation**: [LATE API Docs](https://getlate.dev/docs)
-- **Dashboard**: [getlate.dev/dashboard](https://getlate.dev/dashboard)
-- **Email**: [miki@getlate.dev](mailto:miki@getlate.dev)
-- **Issues**: [GitHub Issues](https://github.com/getlatedev/n8n-nodes-late/issues)
+- **Documentation**: [Zernio API Docs](https://docs.zernio.com)
+- **Dashboard**: [zernio.com/dashboard](https://zernio.com/dashboard)
+- **Email**: [miki@zernio.com](mailto:miki@zernio.com)
+- **Issues**: [GitHub Issues](https://github.com/zernio-dev/n8n-nodes-zernio/issues)
 
 ## License
 
@@ -470,4 +470,5 @@ Contributions are welcome! Please read our contributing guidelines and submit pu
 
 **Made with love by the LATE team**
 
-[Website](https://getlate.dev) | [Documentation](https://getlate.dev/docs) | [Dashboard](https://getlate.dev/dashboard)
+[Website](https://zernio.com) | [Documentation](https://docs.zernio.com) | [Dashboard](https://zernio.com/dashboard)
+

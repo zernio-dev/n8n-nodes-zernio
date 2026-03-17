@@ -143,7 +143,7 @@ export async function postsCreatePreSend(
   if (!isDraft && platforms.length === 0) {
     throw new Error(
       'No valid accounts selected. Please select at least one account for each platform you want to post to. ' +
-      'If no accounts appear in the dropdown, make sure you have connected accounts in your LATE dashboard (https://getlate.dev).'
+      'If no accounts appear in the dropdown, make sure you have connected accounts in your LATE dashboard (https://zernio.com).'
     );
   }
 
