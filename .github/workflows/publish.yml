@@ -115,14 +115,27 @@ jobs:
           echo "Verifying package contents before publish..."
           npm pack --dry-run
 
-      - name: Publish to NPM
+      - name: Publish to NPM as n8n-nodes-late
         run: |
-          echo "Publishing to NPM..."
+          echo "Publishing n8n-nodes-late to NPM..."
           npm publish --access public
-          
-          # Verify publication
+
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
           echo "✅ Successfully published n8n-nodes-late@$PACKAGE_VERSION to NPM"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to NPM as n8n-nodes-zernio
+        continue-on-error: true
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          # Swap package name for dual publish
+          node -e "const p=require('./package.json'); p.name='n8n-nodes-zernio'; require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2)+'\n')"
+          echo "Publishing n8n-nodes-zernio@$PACKAGE_VERSION to NPM..."
+          npm publish --access public
+          echo "✅ Successfully published n8n-nodes-zernio@$PACKAGE_VERSION to NPM"
+          # Restore original package name
+          node -e "const p=require('./package.json'); p.name='n8n-nodes-late'; require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2)+'\n')"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -142,6 +155,13 @@ jobs:
             echo "Expected: $PACKAGE_VERSION, Found: $NPM_VERSION"
           fi
 
+          NPM_VERSION_ZERNIO=$(npm view n8n-nodes-zernio@$PACKAGE_VERSION version 2>/dev/null || echo "not-found")
+          if [ "$NPM_VERSION_ZERNIO" = "$PACKAGE_VERSION" ]; then
+            echo "✅ Publication verified: n8n-nodes-zernio@$PACKAGE_VERSION is available on NPM"
+          else
+            echo "⚠️  Could not immediately verify n8n-nodes-zernio publication"
+          fi
+
       - name: Update GitHub release
         if: github.event_name == 'release'
         uses: actions/github-script@v7
@@ -155,15 +175,17 @@ jobs:
             const releaseUrl = context.payload.release.html_url;
             const body = `🚀 **Successfully published to NPM!**
             
-            📦 **Package:** \`n8n-nodes-late@${packageVersion}\`
-            🔗 **NPM:** https://www.npmjs.com/package/n8n-nodes-late
-            
+            📦 **Packages:**
+            - \`n8n-nodes-late@${packageVersion}\`
+            - \`n8n-nodes-zernio@${packageVersion}\`
+            🔗 **NPM:** https://www.npmjs.com/package/n8n-nodes-zernio
+
             ### Installation
             \`\`\`bash
-            npm install n8n-nodes-late@${packageVersion}
+            npm install n8n-nodes-zernio@${packageVersion}
             \`\`\`
-            
-            Or install via n8n Community Nodes panel using: \`n8n-nodes-late\`
+
+            Or install via n8n Community Nodes panel using: \`n8n-nodes-zernio\` (or \`n8n-nodes-late\`)
             `;
             
             // Update the release body to include publication info
