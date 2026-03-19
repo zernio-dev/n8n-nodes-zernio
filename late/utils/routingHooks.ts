@@ -1,5 +1,30 @@
-import FormData from "form-data";
+import { randomBytes } from "crypto";
 import { processParametersWithExpressions } from "./expressionProcessor";
+
+/**
+ * Minimal multipart/form-data builder that avoids the 'form-data' npm package.
+ * n8n Cloud rejects community nodes with external dependencies.
+ */
+class MultipartFormData {
+  private boundary = `----n8nBoundary${randomBytes(16).toString("hex")}`;
+  private parts: Buffer[] = [];
+
+  append(name: string, value: Buffer, options: { filename: string; contentType: string }) {
+    const header =
+      `--${this.boundary}\r\n` +
+      `Content-Disposition: form-data; name="${name}"; filename="${options.filename}"\r\n` +
+      `Content-Type: ${options.contentType}\r\n\r\n`;
+    this.parts.push(Buffer.from(header), value, Buffer.from("\r\n"));
+  }
+
+  getHeaders(): Record<string, string> {
+    return { "Content-Type": `multipart/form-data; boundary=${this.boundary}` };
+  }
+
+  getBody(): Buffer {
+    return Buffer.concat([...this.parts, Buffer.from(`--${this.boundary}--\r\n`)]);
+  }
+}
 
 /**
  * Utility functions for routing hooks that process expressions
@@ -231,7 +256,7 @@ export async function mediaUploadPreSend(
   requestOptions: any
 ): Promise<any> {
   const inputMode = this.getNodeParameter("inputMode", 0, "binary") as string;
-  const formData = new FormData();
+  const formData = new MultipartFormData();
 
   if (inputMode === "binary") {
     // Binary mode: read binary data from the incoming n8n item.
@@ -340,11 +365,10 @@ export async function mediaUploadPreSend(
     }
   }
 
-  // Replace the request body with the constructed FormData.
-  // form-data's getHeaders() generates the correct Content-Type header
-  // including the multipart boundary, which is required for the server
-  // to parse the form data correctly.
-  requestOptions.body = formData;
+  // Replace the request body with the constructed multipart form data.
+  // getBody() returns the full multipart buffer and getHeaders() generates
+  // the correct Content-Type header including the boundary.
+  requestOptions.body = formData.getBody();
   requestOptions.headers = {
     ...requestOptions.headers,
     ...formData.getHeaders(),
