@@ -51,16 +51,16 @@ export class Late implements INodeType {
   };
 
   description: INodeTypeDescription = {
-    displayName: "LATE",
+    displayName: "Zernio",
     name: "late",
     icon: "file:late-logo.svg",
     group: ["transform"],
     version: 1,
     description:
-      "Schedule and manage social media posts across multiple platforms with LATE - supporting Twitter/X, Instagram, Facebook, LinkedIn, TikTok, YouTube, Threads, Bluesky, Pinterest, Reddit, Telegram, Google Business, and Snapchat",
+      "Schedule and manage social media posts across multiple platforms with Zernio - supporting Twitter/X, Instagram, Facebook, LinkedIn, TikTok, YouTube, Threads, Bluesky, Pinterest, Reddit, Telegram, Google Business, and Snapchat",
     subtitle: '={{$parameter["resource"] + ": " + $parameter["operation"]}}',
     defaults: {
-      name: "LATE",
+      name: "Zernio",
     },
     inputs: [NodeConnectionType.Main],
     outputs: [NodeConnectionType.Main],

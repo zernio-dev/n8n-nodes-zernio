@@ -115,28 +115,28 @@ jobs:
           echo "Verifying package contents before publish..."
           npm pack --dry-run
 
-      - name: Publish to NPM as n8n-nodes-late
-        continue-on-error: true
-        run: |
-          echo "Publishing n8n-nodes-late to NPM..."
-          npm publish --access public
-
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          echo "✅ Successfully published n8n-nodes-late@$PACKAGE_VERSION to NPM"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Publish to NPM as n8n-nodes-zernio
         continue-on-error: true
         run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          # Swap package name for dual publish
-          node -e "const p=require('./package.json'); p.name='n8n-nodes-zernio'; require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2)+'\n')"
-          echo "Publishing n8n-nodes-zernio@$PACKAGE_VERSION to NPM..."
+          echo "Publishing n8n-nodes-zernio to NPM..."
           npm publish --access public
+
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
           echo "✅ Successfully published n8n-nodes-zernio@$PACKAGE_VERSION to NPM"
-          # Restore original package name
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to NPM as n8n-nodes-late (backwards compat)
+        continue-on-error: true
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          # Swap package name for backwards-compatible dual publish
           node -e "const p=require('./package.json'); p.name='n8n-nodes-late'; require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2)+'\n')"
+          echo "Publishing n8n-nodes-late@$PACKAGE_VERSION to NPM..."
+          npm publish --access public
+          echo "✅ Successfully published n8n-nodes-late@$PACKAGE_VERSION to NPM"
+          # Restore original package name
+          node -e "const p=require('./package.json'); p.name='n8n-nodes-zernio'; require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2)+'\n')"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -147,20 +147,20 @@ jobs:
           sleep 10
           
           echo "Verifying publication on NPM registry..."
-          NPM_VERSION=$(npm view n8n-nodes-late@$PACKAGE_VERSION version 2>/dev/null || echo "not-found")
-          
-          if [ "$NPM_VERSION" = "$PACKAGE_VERSION" ]; then
-            echo "✅ Publication verified: n8n-nodes-late@$PACKAGE_VERSION is available on NPM"
-          else
-            echo "⚠️  Could not immediately verify publication (NPM may be slow to update)"
-            echo "Expected: $PACKAGE_VERSION, Found: $NPM_VERSION"
-          fi
-
           NPM_VERSION_ZERNIO=$(npm view n8n-nodes-zernio@$PACKAGE_VERSION version 2>/dev/null || echo "not-found")
+
           if [ "$NPM_VERSION_ZERNIO" = "$PACKAGE_VERSION" ]; then
             echo "✅ Publication verified: n8n-nodes-zernio@$PACKAGE_VERSION is available on NPM"
           else
-            echo "⚠️  Could not immediately verify n8n-nodes-zernio publication"
+            echo "⚠️  Could not immediately verify publication (NPM may be slow to update)"
+            echo "Expected: $PACKAGE_VERSION, Found: $NPM_VERSION_ZERNIO"
+          fi
+
+          NPM_VERSION_LATE=$(npm view n8n-nodes-late@$PACKAGE_VERSION version 2>/dev/null || echo "not-found")
+          if [ "$NPM_VERSION_LATE" = "$PACKAGE_VERSION" ]; then
+            echo "✅ Publication verified: n8n-nodes-late@$PACKAGE_VERSION is available on NPM"
+          else
+            echo "⚠️  Could not immediately verify n8n-nodes-late publication"
           fi
 
       - name: Update GitHub release
@@ -216,9 +216,9 @@ jobs:
       - name: Success notification
         run: |
           echo "✅ Package successfully published to NPM!"
-          echo "📦 Package: n8n-nodes-late"
+          echo "📦 Package: n8n-nodes-zernio"
           echo "🏷️  Version: ${GITHUB_REF#refs/tags/}"
-          echo "🔗 NPM: https://www.npmjs.com/package/n8n-nodes-late"
+          echo "🔗 NPM: https://www.npmjs.com/package/n8n-nodes-zernio"
           echo "🔗 GitHub Release: ${{ github.event.release.html_url }}"
 
   notify-failure:

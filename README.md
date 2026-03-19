@@ -1,4 +1,4 @@
-# n8n-nodes-late
+# n8n-nodes-zernio
 
 <img src="https://zernio.com/brand/logo-primary.png" alt="Zernio Logo" width="200"/>
 
@@ -28,21 +28,23 @@ An n8n community node for the [Zernio API](https://zernio.com) - the professiona
 ### From n8n Community Nodes Panel (Recommended)
 
 1. Go to **Settings** → **Community Nodes** in your n8n instance
-2. Select **Install** and enter `n8n-nodes-late`
+2. Select **Install** and enter `n8n-nodes-zernio`
 3. Click **Install** and restart n8n
 4. The Zernio node will appear in your node palette
+
+> **Note:** Also available as `n8n-nodes-late` for backwards compatibility.
 
 ### From npm
 
 ```bash
-npm install n8n-nodes-late
+npm install n8n-nodes-zernio
 ```
 
 ### From Source
 
 ```bash
 git clone https://github.com/zernio-dev/n8n-nodes-zernio.git
-cd n8n-nodes-late
+cd n8n-nodes-zernio
 npm install
 npm run build
 ```
@@ -440,7 +442,7 @@ Check the node output for detailed error messages and upgrade suggestions.
 ### Setup
 ```bash
 git clone https://github.com/zernio-dev/n8n-nodes-zernio.git
-cd n8n-nodes-late
+cd n8n-nodes-zernio
 npm install
 npm run build
 ```

@@ -106,7 +106,7 @@ export async function loadPlatformAccounts(
   } catch (error) {
     const errorMsg =
       (error as any)?.cause?.code === "ECONNREFUSED"
-        ? "Cannot connect to LATE API. Please check your internet connection."
+        ? "Cannot connect to Zernio API. Please check your internet connection."
         : (error as Error).message || "Failed to load accounts";
     return [{ name: `Connection error: ${errorMsg} - check API key`, value: "error" }];
   }
