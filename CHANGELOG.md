@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.0] - 2026-03-19
+
+### Changes
+- fix: rebrand display names to Zernio, keep internal names for workflow compat
+- fix: allow n8n-nodes-late publish to fail without blocking n8n-nodes-zernio
+- feat: add dual publish as n8n-nodes-zernio alongside n8n-nodes-late
+- docs: update README logo and branding to Zernio
+
+
 ## [0.3.3] - 2026-03-17
 
 ### Changes
