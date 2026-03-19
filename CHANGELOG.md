@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.4] - 2026-03-19
+
+### Changes
+- fix: remove form-data dependency for n8n Cloud compatibility
+
+
 ## [0.4.3] - 2026-03-19
 
 ### Changes
