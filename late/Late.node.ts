@@ -53,7 +53,7 @@ export class Late implements INodeType {
   description: INodeTypeDescription = {
     displayName: "Zernio",
     name: "late",
-    icon: "file:late-logo.svg",
+    icon: "file:zernio-logo.svg",
     group: ["transform"],
     version: 1,
     description:
