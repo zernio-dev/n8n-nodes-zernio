@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1] - 2026-03-24
+
+### Changes
+- Merge pull request #21 from zernio-dev/fix/media-upload-filename-extension
+- fix: ensure uploaded filenames have proper extensions from MIME type
+
+
 ## [0.5.0] - 2026-03-24
 
 ### Changes
