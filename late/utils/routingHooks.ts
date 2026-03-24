@@ -251,6 +251,40 @@ export async function postsUpdatePreSend(
  * @param requestOptions - The HTTP request options to modify
  * @returns Modified request options with FormData body and proper headers
  */
+
+/**
+ * Ensures a filename has a proper file extension by inferring it from the MIME type.
+ * Some n8n nodes don't set fileName with an extension, which causes uploaded URLs
+ * to lack a file extension (e.g., "upload" instead of "upload.webp").
+ *
+ * @param filename - The original filename (may lack an extension)
+ * @param mimeType - The MIME type to infer the extension from
+ * @returns The filename with a proper extension appended if it was missing
+ */
+function ensureFilenameExtension(filename: string, mimeType: string): string {
+  // Check if filename already has an extension (contains a dot with chars after it)
+  if (/\.[a-zA-Z0-9]+$/.test(filename)) return filename;
+
+  const extMap: Record<string, string> = {
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+    "image/webp": ".webp",
+    "image/gif": ".gif",
+    "image/svg+xml": ".svg",
+    "image/bmp": ".bmp",
+    "image/tiff": ".tiff",
+    "video/mp4": ".mp4",
+    "video/quicktime": ".mov",
+    "video/x-msvideo": ".avi",
+    "video/webm": ".webm",
+    "video/mpeg": ".mpeg",
+    "application/pdf": ".pdf",
+  };
+
+  const ext = extMap[mimeType];
+  return ext ? filename + ext : filename;
+}
+
 export async function mediaUploadPreSend(
   this: any,
   requestOptions: any
@@ -321,6 +355,11 @@ export async function mediaUploadPreSend(
       }
     }
 
+    // Ensure filename has a proper extension by inferring from MIME type when missing.
+    // Some n8n nodes (e.g., HTTP Request) don't set fileName with an extension,
+    // which causes uploaded URLs to lack a file extension.
+    filename = ensureFilenameExtension(filename, mimeType);
+
     // Append file to FormData. The form-data package handles Buffer directly
     // and generates proper Content-Disposition headers with the filename.
     formData.append("files", fileBuffer, {
@@ -355,8 +394,11 @@ export async function mediaUploadPreSend(
       }
 
       const fileBuffer = Buffer.from(base64Data, "base64");
-      const filename = item.filename || "upload";
+      let filename = item.filename || "upload";
       const mimeType = item.mimeType || "application/octet-stream";
+
+      // Ensure filename has a proper extension by inferring from MIME type when missing
+      filename = ensureFilenameExtension(filename, mimeType);
 
       formData.append("files", fileBuffer, {
         filename,
