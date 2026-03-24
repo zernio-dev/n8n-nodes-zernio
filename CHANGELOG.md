@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.2] - 2026-03-24
+
+### Changes
+- fix: use NodeApiError and NodeOperationError instead of generic Error
+
+
 ## [0.5.1] - 2026-03-24
 
 ### Changes
