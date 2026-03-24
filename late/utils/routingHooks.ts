@@ -1,4 +1,5 @@
 import { randomBytes } from "crypto";
+import { NodeApiError, NodeOperationError } from "n8n-workflow";
 import { processParametersWithExpressions } from "./expressionProcessor";
 
 /**
@@ -54,7 +55,7 @@ export async function handleApiErrorResponse(
       errorMessage += `: ${body}`;
     }
 
-    throw new Error(errorMessage);
+    throw new NodeApiError(this.getNode(), { message: errorMessage });
   }
   return items;
 }
@@ -166,9 +167,10 @@ export async function postsCreatePreSend(
   const isDraft = this.getNodeParameter("isDraft", 0, false);
 
   if (!isDraft && platforms.length === 0) {
-    throw new Error(
+    throw new NodeOperationError(
+      this.getNode(),
       'No valid accounts selected. Please select at least one account for each platform you want to post to. ' +
-      'If no accounts appear in the dropdown, make sure you have connected accounts in your LATE dashboard (https://zernio.com).'
+      'If no accounts appear in the dropdown, make sure you have connected accounts in your LATE dashboard (https://zernio.com).',
     );
   }
 
@@ -318,11 +320,12 @@ export async function mediaUploadPreSend(
     }
 
     if (!fileBuffer || fileBuffer.length === 0) {
-      throw new Error(
+      throw new NodeOperationError(
+        this.getNode(),
         `No binary data found in property "${binaryPropertyName}". ` +
           "Make sure a previous node (e.g., Read Binary File, HTTP Request, " +
           'Telegram) outputs binary data with this property name. Check the "Binary" ' +
-          "tab in the previous node's output to verify the property name."
+          "tab in the previous node's output to verify the property name.",
       );
     }
 
@@ -381,8 +384,9 @@ export async function mediaUploadPreSend(
     const items = filesParam?.items || [];
 
     if (items.length === 0) {
-      throw new Error(
-        "No files provided. Add at least one file in the Files collection."
+      throw new NodeOperationError(
+        this.getNode(),
+        "No files provided. Add at least one file in the Files collection.",
       );
     }
 
