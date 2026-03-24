@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0] - 2026-03-24
+
+### Changes
+- Merge pull request #15 from zernio-dev/feat/auto-sync-api-changes
+- feat: auto-sync with Zernio API changes
+
+
 ## [0.4.4] - 2026-03-19
 
 ### Changes
