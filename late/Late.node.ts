@@ -34,6 +34,7 @@ import {
   logsResource,
   apiKeysResource,
   usersResource,
+  toolsResource,
 } from "./resources";
 
 export class Late implements INodeType {
@@ -107,6 +108,7 @@ export class Late implements INodeType {
       logs: logsResource,
       apiKeys: apiKeysResource,
       users: usersResource,
+      tools: toolsResource,
     }),
   };
 }

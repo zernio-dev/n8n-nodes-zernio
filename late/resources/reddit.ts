@@ -23,21 +23,28 @@ export const redditResource: LateResourceModule = {
           method: "PUT",
           url: "=/accounts/{{ $parameter.accountId }}/reddit-subreddits",
           body: {
-            subredditIds: "={{ $parameter.subredditIds.split(',').map(s => s.trim()).filter(s => s) }}",
+            subredditIds:
+              "={{ $parameter.subredditIds.split(',').map(s => s.trim()).filter(s => s) }}",
           },
         },
       },
     },
     {
-      name: "Search Communities",
-      value: "search",
-      action: "Search Reddit communities",
+      name: "Search Posts",
+      value: "searchReddit",
+      action: "Search Reddit posts",
       routing: {
         request: {
           method: "GET",
-          url: "/reddit/search",
+          url: "/v1/reddit/search",
           qs: {
-            query: "={{ $parameter.query }}",
+            accountId: "={{ $parameter.accountId }}",
+            subreddit: "={{ $parameter.subreddit || undefined }}",
+            q: "={{ $parameter.q }}",
+            restrict_sr: "={{ $parameter.restrict_sr || undefined }}",
+            sort: "={{ $parameter.sort || 'new' }}",
+            limit: "={{ $parameter.limit || 25 }}",
+            after: "={{ $parameter.after || undefined }}",
           },
         },
       },
@@ -49,7 +56,7 @@ export const redditResource: LateResourceModule = {
       routing: {
         request: {
           method: "GET",
-          url: "/reddit/feed",
+          url: "/v1/reddit/feed",
           qs: {
             accountId: "={{ $parameter.accountId }}",
             subreddit: "={{ $parameter.subreddit || undefined }}",
@@ -67,7 +74,7 @@ export const redditResource: LateResourceModule = {
     // Account ID for subreddit operations
     buildAccountIdField(
       "reddit",
-      ["listSubreddits", "updateSubreddits", "feed"],
+      ["listSubreddits", "updateSubreddits", "feed", "searchReddit"],
       "Account ID",
       "The Reddit account ID"
     ),
@@ -90,24 +97,22 @@ export const redditResource: LateResourceModule = {
       required: true,
     },
 
-    // Search query
+    // Search posts fields
     {
-      displayName: "Search Query",
-      name: "query",
+      displayName: "Query",
+      name: "q",
       type: "string",
       default: "",
       displayOptions: {
         show: {
           resource: ["reddit"],
-          operation: ["search"],
+          operation: ["searchReddit"],
         },
       },
-      description: "Search query to find Reddit communities/subreddits",
-      placeholder: "programming",
+      description: "Search query to find Reddit posts",
+      placeholder: "typescript n8n",
       required: true,
     },
-
-    // Feed fields
     {
       displayName: "Subreddit",
       name: "subreddit",
@@ -116,13 +121,80 @@ export const redditResource: LateResourceModule = {
       displayOptions: {
         show: {
           resource: ["reddit"],
-          operation: ["feed"],
+          operation: ["searchReddit", "feed"],
         },
       },
       description:
-        "Subreddit name to fetch (without r/). Leave empty for home feed.",
+        "Subreddit name to scope results (without r/). Leave empty for all.",
       placeholder: "programming",
     },
+    {
+      displayName: "Restrict to Subreddit",
+      name: "restrict_sr",
+      type: "options",
+      options: [
+        { name: "No", value: "0" },
+        { name: "Yes", value: "1" },
+      ],
+      default: "0",
+      displayOptions: {
+        show: {
+          resource: ["reddit"],
+          operation: ["searchReddit"],
+        },
+      },
+      description:
+        "Whether to restrict search results to the specified subreddit",
+    },
+    {
+      displayName: "Sort",
+      name: "sort",
+      type: "options",
+      options: [
+        { name: "New", value: "new" },
+        { name: "Relevance", value: "relevance" },
+        { name: "Hot", value: "hot" },
+        { name: "Top", value: "top" },
+        { name: "Comments", value: "comments" },
+      ],
+      default: "new",
+      displayOptions: {
+        show: {
+          resource: ["reddit"],
+          operation: ["searchReddit"],
+        },
+      },
+      description: "Sort order for search results",
+    },
+    {
+      displayName: "Limit",
+      name: "limit",
+      type: "number",
+      default: 25,
+      displayOptions: {
+        show: {
+          resource: ["reddit"],
+          operation: ["searchReddit", "feed"],
+        },
+      },
+      description: "Number of posts to fetch (max 100)",
+    },
+    {
+      displayName: "After",
+      name: "after",
+      type: "string",
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["reddit"],
+          operation: ["searchReddit", "feed"],
+        },
+      },
+      description: "Pagination cursor for fetching next page of results",
+      placeholder: "t3_abc123",
+    },
+
+    // Feed fields
     {
       displayName: "Sort",
       name: "sort",
@@ -141,33 +213,6 @@ export const redditResource: LateResourceModule = {
         },
       },
       description: "Sort order for feed items",
-    },
-    {
-      displayName: "Limit",
-      name: "limit",
-      type: "number",
-      default: 25,
-      displayOptions: {
-        show: {
-          resource: ["reddit"],
-          operation: ["feed"],
-        },
-      },
-      description: "Number of posts to fetch (max 100)",
-    },
-    {
-      displayName: "After",
-      name: "after",
-      type: "string",
-      default: "",
-      displayOptions: {
-        show: {
-          resource: ["reddit"],
-          operation: ["feed"],
-        },
-      },
-      description: "Pagination cursor for fetching next page of results",
-      placeholder: "t3_abc123",
     },
     {
       displayName: "Time Filter",

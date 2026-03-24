@@ -17,12 +17,19 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "GET",
-          url: "/posts",
+          url: "/v1/posts",
           qs: {
             page: "={{ $parameter.page || 1 }}",
             limit: "={{ $parameter.limit || 10 }}",
             status: "={{ $parameter.status || undefined }}",
             platform: "={{ $parameter.platform || undefined }}",
+            profileId: "={{ $parameter.profileId || undefined }}",
+            createdBy: "={{ $parameter.createdBy || undefined }}",
+            dateFrom: "={{ $parameter.dateFrom || undefined }}",
+            dateTo: "={{ $parameter.dateTo || undefined }}",
+            includeHidden: "={{ $parameter.includeHidden ?? undefined }}",
+            search: "={{ $parameter.search || undefined }}",
+            sortBy: "={{ $parameter.sortBy || undefined }}",
           },
         },
       },
@@ -34,7 +41,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "GET",
-          url: "=/posts/{{ $parameter.postId }}",
+          url: "=/v1/posts/{{ $parameter.postId }}",
         },
       },
     },
@@ -45,7 +52,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "POST",
-          url: "/posts",
+          url: "/v1/posts",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
         },
@@ -64,7 +71,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "PUT",
-          url: "=/posts/{{ $parameter.postId }}",
+          url: "=/v1/posts/{{ $parameter.postId }}",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
         },
@@ -83,7 +90,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "DELETE",
-          url: "=/posts/{{ $parameter.postId }}",
+          url: "=/v1/posts/{{ $parameter.postId }}",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
         },
@@ -99,7 +106,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "POST",
-          url: "=/posts/{{ $parameter.postId }}/retry",
+          url: "=/v1/posts/{{ $parameter.postId }}/retry",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
         },
@@ -109,13 +116,21 @@ export const postsResource: LateResourceModule = {
       },
     },
     {
-      name: "Get Logs",
-      value: "logs",
-      action: "Get post publishing logs",
+      name: "Unpublish",
+      value: "unpublish",
+      action: "Unpublish post",
       routing: {
         request: {
-          method: "GET",
-          url: "=/posts/{{ $parameter.postId }}/logs",
+          method: "POST",
+          url: "=/v1/posts/{{ $parameter.postId }}/unpublish",
+          ignoreHttpStatusErrors: true,
+          returnFullResponse: true,
+          body: {
+            platform: "={{ $parameter.unpublishPlatform }}",
+          },
+        },
+        output: {
+          postReceive: [handleApiErrorResponse],
         },
       },
     },
@@ -126,7 +141,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "POST",
-          url: "/posts/bulk-upload",
+          url: "/v1/posts/bulk-upload",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
           headers: {
@@ -141,6 +156,17 @@ export const postsResource: LateResourceModule = {
         },
         output: {
           postReceive: [handleApiErrorResponse],
+        },
+      },
+    },
+    {
+      name: "Get Logs",
+      value: "logs",
+      action: "Get post publishing logs",
+      routing: {
+        request: {
+          method: "GET",
+          url: "=/posts/{{ $parameter.postId }}/logs",
         },
       },
     },
@@ -203,8 +229,7 @@ export const postsResource: LateResourceModule = {
               typeOptions: {
                 multipleValues: true,
               },
-              description:
-                "Media files for this tweet. Note: Only the first tweet in a thread can have media.",
+              description: "Media files for this tweet. Note: Only the first tweet in a thread can have media.",
               options: [
                 {
                   name: "items",
@@ -218,6 +243,7 @@ export const postsResource: LateResourceModule = {
                         { name: "Image", value: "image" },
                         { name: "Video", value: "video" },
                         { name: "GIF", value: "gif" },
+                        { name: "Document", value: "document" },
                       ],
                       default: "image",
                       description: "Type of media file",
@@ -292,8 +318,7 @@ export const postsResource: LateResourceModule = {
               typeOptions: {
                 multipleValues: true,
               },
-              description:
-                "Media files for this post. Note: Only the first post in a conversation can have media.",
+              description: "Media files for this post. Note: Only the first post in a conversation can have media.",
               options: [
                 {
                   name: "items",
@@ -307,6 +332,7 @@ export const postsResource: LateResourceModule = {
                         { name: "Image", value: "image" },
                         { name: "Video", value: "video" },
                         { name: "GIF", value: "gif" },
+                        { name: "Document", value: "document" },
                       ],
                       default: "image",
                       description: "Type of media file",
@@ -354,8 +380,7 @@ export const postsResource: LateResourceModule = {
           selectedPlatforms: ["bluesky"],
         },
       },
-      description:
-        "Create Bluesky threads with multiple posts. Each post supports up to 300 characters. Only the first post can include media.",
+      description: "Create Bluesky threads with multiple posts. Each post supports up to 300 characters. Only the first post can include media.",
       options: [
         {
           name: "items",
@@ -381,8 +406,7 @@ export const postsResource: LateResourceModule = {
               typeOptions: {
                 multipleValues: true,
               },
-              description:
-                "Media files for this post. Note: Only the first post in a thread can have media.",
+              description: "Media files for this post. Note: Only the first post in a thread can have media.",
               options: [
                 {
                   name: "items",
@@ -396,6 +420,7 @@ export const postsResource: LateResourceModule = {
                         { name: "Image", value: "image" },
                         { name: "Video", value: "video" },
                         { name: "GIF", value: "gif" },
+                        { name: "Document", value: "document" },
                       ],
                       default: "image",
                       description: "Type of media file",
@@ -489,6 +514,35 @@ export const postsResource: LateResourceModule = {
       description: "Allow other users to stitch this video",
     },
 
+    // Unpublish fields
+    {
+      displayName: "Platform",
+      name: "unpublishPlatform",
+      type: "options",
+      options: [
+        { name: "Threads", value: "threads" },
+        { name: "Facebook", value: "facebook" },
+        { name: "Twitter/X", value: "twitter" },
+        { name: "LinkedIn", value: "linkedin" },
+        { name: "YouTube", value: "youtube" },
+        { name: "Pinterest", value: "pinterest" },
+        { name: "Reddit", value: "reddit" },
+        { name: "Bluesky", value: "bluesky" },
+        { name: "Google Business", value: "googlebusiness" },
+        { name: "Telegram", value: "telegram" },
+      ],
+      default: "twitter",
+      required: true,
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["unpublish"],
+        },
+      },
+      description:
+        "The platform to delete the published post from. Not supported on Instagram, TikTok, or Snapchat. Threaded posts delete all items; YouTube deletion is permanent.",
+    },
+
     // Bulk upload fields
     {
       displayName: "CSV File",
@@ -517,11 +571,116 @@ export const postsResource: LateResourceModule = {
           operation: ["bulkUpload"],
         },
       },
-      description:
-        "If true, validates the CSV without creating posts. Use this to check for errors before actual upload.",
+      description: "If true, validates the CSV without creating posts. Use this to check for errors before actual upload.",
     },
 
     // List filters
     ...buildListFields(),
+
+    // Additional list filters (v1)
+    {
+      displayName: "Profile ID",
+      name: "profileId",
+      type: "string",
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["list"],
+        },
+      },
+      description: "Filter posts by profile ID",
+      placeholder: "64e1f0a9e2b5af0012ab34cd",
+    },
+    {
+      displayName: "Created By",
+      name: "createdBy",
+      type: "string",
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["list"],
+        },
+      },
+      description: "Filter posts by creator user ID",
+      placeholder: "64e1f0a9e2b5af0012ab34cd",
+    },
+    {
+      displayName: "Date From",
+      name: "dateFrom",
+      type: "string",
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["list"],
+        },
+      },
+      description: "Filter posts created on/after this date (YYYY-MM-DD)",
+      placeholder: "2025-01-01",
+    },
+    {
+      displayName: "Date To",
+      name: "dateTo",
+      type: "string",
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["list"],
+        },
+      },
+      description: "Filter posts created on/before this date (YYYY-MM-DD)",
+      placeholder: "2025-01-31",
+    },
+    {
+      displayName: "Include Hidden",
+      name: "includeHidden",
+      type: "boolean",
+      default: false,
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["list"],
+        },
+      },
+      description: "If true, includes hidden posts in results",
+    },
+    {
+      displayName: "Search",
+      name: "search",
+      type: "string",
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["list"],
+        },
+      },
+      description: "Search posts by text content",
+      placeholder: "launch",
+    },
+    {
+      displayName: "Sort By",
+      name: "sortBy",
+      type: "options",
+      options: [
+        { name: "Scheduled (Newest First)", value: "scheduled-desc" },
+        { name: "Scheduled (Oldest First)", value: "scheduled-asc" },
+        { name: "Created (Newest First)", value: "created-desc" },
+        { name: "Created (Oldest First)", value: "created-asc" },
+        { name: "Status", value: "status" },
+        { name: "Platform", value: "platform" },
+      ],
+      default: "scheduled-desc",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["list"],
+        },
+      },
+      description: "Sort order for results",
+    },
   ],
 };
