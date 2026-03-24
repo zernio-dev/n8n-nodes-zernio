@@ -46,6 +46,7 @@ export const mediaResource: LateResourceModule = {
           body: {
             filename: "={{ $parameter.filename }}",
             contentType: "={{ $parameter.contentType }}",
+            size: "={{ $parameter.size }}",
           },
         },
       },
@@ -136,7 +137,7 @@ export const mediaResource: LateResourceModule = {
       ],
     },
 
-    // Presign fields (unchanged)
+    // Presign fields (updated)
     {
       displayName: "Filename",
       name: "filename",
@@ -158,13 +159,17 @@ export const mediaResource: LateResourceModule = {
       type: "options",
       options: [
         { name: "JPEG Image", value: "image/jpeg" },
+        { name: "JPG Image", value: "image/jpg" },
         { name: "PNG Image", value: "image/png" },
         { name: "WebP Image", value: "image/webp" },
         { name: "GIF Image", value: "image/gif" },
         { name: "MP4 Video", value: "video/mp4" },
+        { name: "MPEG Video", value: "video/mpeg" },
         { name: "MOV Video", value: "video/quicktime" },
-        { name: "AVI Video", value: "video/x-msvideo" },
+        { name: "AVI Video", value: "video/avi" },
+        { name: "AVI Video (x-msvideo)", value: "video/x-msvideo" },
         { name: "WebM Video", value: "video/webm" },
+        { name: "M4V Video", value: "video/x-m4v" },
         { name: "PDF Document", value: "application/pdf" },
       ],
       default: "video/mp4",
@@ -177,6 +182,21 @@ export const mediaResource: LateResourceModule = {
       description:
         "MIME type of the file. Returns uploadUrl and publicUrl. PUT your file to uploadUrl, then use publicUrl in posts.",
       required: true,
+    },
+    {
+      displayName: "Size (bytes)",
+      name: "size",
+      type: "number",
+      default: 0,
+      displayOptions: {
+        show: {
+          resource: ["media"],
+          operation: ["presign"],
+        },
+      },
+      description:
+        "Optional file size in bytes for pre-validation (max 5GB). Leave empty or 0 to omit.",
+      placeholder: "15234567",
     },
   ],
 };
