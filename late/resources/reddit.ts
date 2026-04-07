@@ -36,7 +36,7 @@ export const redditResource: LateResourceModule = {
       routing: {
         request: {
           method: "GET",
-          url: "/v1/reddit/search",
+          url: "/reddit/search",
           qs: {
             accountId: "={{ $parameter.accountId }}",
             subreddit: "={{ $parameter.subreddit || undefined }}",
@@ -56,7 +56,7 @@ export const redditResource: LateResourceModule = {
       routing: {
         request: {
           method: "GET",
-          url: "/v1/reddit/feed",
+          url: "/reddit/feed",
           qs: {
             accountId: "={{ $parameter.accountId }}",
             subreddit: "={{ $parameter.subreddit || undefined }}",

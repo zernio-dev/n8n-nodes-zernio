@@ -10,7 +10,7 @@ export const queueResource: LateResourceModule = {
       routing: {
         request: {
           method: "GET",
-          url: "/v1/queue/slots",
+          url: "/queue/slots",
           qs: {
             profileId: "={{ $parameter.profileId }}",
             queueId: "={{ $parameter.queueId || undefined }}",
@@ -26,7 +26,7 @@ export const queueResource: LateResourceModule = {
       routing: {
         request: {
           method: "POST",
-          url: "/v1/queue/slots",
+          url: "/queue/slots",
           body: {
             profileId: "={{ $parameter.profileId }}",
             name: "={{ $parameter.name }}",
@@ -44,7 +44,7 @@ export const queueResource: LateResourceModule = {
       routing: {
         request: {
           method: "PUT",
-          url: "/v1/queue/slots",
+          url: "/queue/slots",
           body: {
             profileId: "={{ $parameter.profileId }}",
             queueId: "={{ $parameter.queueId || undefined }}",
@@ -65,7 +65,7 @@ export const queueResource: LateResourceModule = {
       routing: {
         request: {
           method: "DELETE",
-          url: "/v1/queue/slots",
+          url: "/queue/slots",
           qs: {
             profileId: "={{ $parameter.profileId }}",
             queueId: "={{ $parameter.queueId }}",
@@ -80,7 +80,7 @@ export const queueResource: LateResourceModule = {
       routing: {
         request: {
           method: "GET",
-          url: "/v1/queue/preview",
+          url: "/queue/preview",
           qs: {
             profileId: "={{ $parameter.profileId }}",
             queueId: "={{ $parameter.queueId || undefined }}",
@@ -96,7 +96,7 @@ export const queueResource: LateResourceModule = {
       routing: {
         request: {
           method: "GET",
-          url: "/v1/queue/next-slot",
+          url: "/queue/next-slot",
           qs: {
             profileId: "={{ $parameter.profileId }}",
             queueId: "={{ $parameter.queueId || undefined }}",

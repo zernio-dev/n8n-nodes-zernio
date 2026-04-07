@@ -17,7 +17,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "GET",
-          url: "/v1/posts",
+          url: "/posts",
           qs: {
             page: "={{ $parameter.page || 1 }}",
             limit: "={{ $parameter.limit || 10 }}",
@@ -41,7 +41,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "GET",
-          url: "=/v1/posts/{{ $parameter.postId }}",
+          url: "=/posts/{{ $parameter.postId }}",
         },
       },
     },
@@ -52,7 +52,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "POST",
-          url: "/v1/posts",
+          url: "/posts",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
         },
@@ -71,7 +71,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "PUT",
-          url: "=/v1/posts/{{ $parameter.postId }}",
+          url: "=/posts/{{ $parameter.postId }}",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
         },
@@ -90,7 +90,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "DELETE",
-          url: "=/v1/posts/{{ $parameter.postId }}",
+          url: "=/posts/{{ $parameter.postId }}",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
         },
@@ -106,7 +106,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "POST",
-          url: "=/v1/posts/{{ $parameter.postId }}/retry",
+          url: "=/posts/{{ $parameter.postId }}/retry",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
         },
@@ -122,7 +122,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "POST",
-          url: "=/v1/posts/{{ $parameter.postId }}/unpublish",
+          url: "=/posts/{{ $parameter.postId }}/unpublish",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
           body: {
@@ -141,7 +141,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "POST",
-          url: "/v1/posts/bulk-upload",
+          url: "/posts/bulk-upload",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
           headers: {
