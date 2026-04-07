@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.3] - 2026-04-07
+
+### Changes
+- Merge pull request #24 from zernio-dev/fix/double-v1-resource-urls
+
+
 ## [0.5.2] - 2026-03-24
 
 ### Changes
