@@ -9,7 +9,7 @@ export const usageResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/v1/usage-stats",
+					url: "/usage-stats",
 				},
 			},
 		},
@@ -20,7 +20,7 @@ export const usageResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/v1/usage-stats",
+					url: "/usage-stats",
 				},
 			},
 		},

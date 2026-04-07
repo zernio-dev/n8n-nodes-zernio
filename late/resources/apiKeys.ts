@@ -9,7 +9,7 @@ export const apiKeysResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/v1/api-keys",
+					url: "/api-keys",
 				},
 			},
 		},
@@ -20,7 +20,7 @@ export const apiKeysResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "POST",
-					url: "/v1/api-keys",
+					url: "/api-keys",
 					body: {
 						name: "={{ $parameter.name }}",
 						expiresIn: "={{ $parameter.expiresIn || undefined }}",
@@ -38,7 +38,7 @@ export const apiKeysResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "DELETE",
-					url: "=/v1/api-keys/{{ $parameter.keyId }}",
+					url: "=/api-keys/{{ $parameter.keyId }}",
 				},
 			},
 		},

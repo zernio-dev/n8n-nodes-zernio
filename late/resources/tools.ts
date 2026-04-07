@@ -10,7 +10,7 @@ export const toolsResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/v1/tools/youtube/download",
+					url: "/tools/youtube/download",
 					qs: {
 						url: "={{ $parameter.url }}",
 						action: "={{ $parameter.action }}",
@@ -28,7 +28,7 @@ export const toolsResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/v1/tools/youtube/transcript",
+					url: "/tools/youtube/transcript",
 					qs: {
 						url: "={{ $parameter.url }}",
 						lang: "={{ $parameter.lang }}",
@@ -43,7 +43,7 @@ export const toolsResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/v1/tools/instagram/download",
+					url: "/tools/instagram/download",
 					qs: {
 						url: "={{ $parameter.url }}",
 					},
@@ -57,7 +57,7 @@ export const toolsResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "POST",
-					url: "/v1/tools/instagram/hashtag-checker",
+					url: "/tools/instagram/hashtag-checker",
 					body: {
 						hashtags: "={{ $parameter.hashtags }}",
 					},
@@ -71,7 +71,7 @@ export const toolsResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/v1/tools/tiktok/download",
+					url: "/tools/tiktok/download",
 					qs: {
 						url: "={{ $parameter.url }}",
 						action: "={{ $parameter.action }}",
@@ -87,7 +87,7 @@ export const toolsResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/v1/tools/twitter/download",
+					url: "/tools/twitter/download",
 					qs: {
 						url: "={{ $parameter.url }}",
 						action: "={{ $parameter.action }}",
@@ -103,7 +103,7 @@ export const toolsResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/v1/tools/facebook/download",
+					url: "/tools/facebook/download",
 					qs: {
 						url: "={{ $parameter.url }}",
 					},
@@ -117,7 +117,7 @@ export const toolsResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/v1/tools/linkedin/download",
+					url: "/tools/linkedin/download",
 					qs: {
 						url: "={{ $parameter.url }}",
 					},
@@ -131,7 +131,7 @@ export const toolsResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/v1/tools/bluesky/download",
+					url: "/tools/bluesky/download",
 					qs: {
 						url: "={{ $parameter.url }}",
 					},
