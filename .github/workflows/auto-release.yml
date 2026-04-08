@@ -207,7 +207,10 @@ jobs:
       - name: Create GitHub Release
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # IMPORTANT: Must use a PAT, not GITHUB_TOKEN. Events created by
+          # GITHUB_TOKEN don't trigger other workflows (GitHub's infinite-loop
+          # prevention). Without a PAT the publish.yml workflow never fires.
+          github-token: ${{ secrets.RELEASE_PAT }}
           script: |
             const fs = require('fs');
             const newVersion = '${{ steps.new_version.outputs.new_version }}';
@@ -318,18 +321,18 @@ jobs:
         continue-on-error: true
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Use PAT here too so the workflow_dispatch backup actually works
+          github-token: ${{ secrets.RELEASE_PAT }}
           script: |
             const newVersion = '${{ steps.new_version.outputs.new_version }}';
             const tagName = `v${newVersion}`;
-            
-            console.log('🚀 Triggering NPM publication workflow as backup...');
+
+            console.log('Triggering NPM publication workflow...');
             console.log(`Version: ${newVersion}, Tag: ${tagName}`);
-            
-            // Wait a bit more to ensure the release event has been processed
-            console.log('⏳ Waiting 5 seconds for release event to propagate...');
+
+            // Wait for release event to propagate
             await new Promise(resolve => setTimeout(resolve, 5000));
-            
+
             try {
               await github.rest.actions.createWorkflowDispatch({
                 owner: context.repo.owner,
@@ -340,35 +343,12 @@ jobs:
                   version: 'current'
                 }
               });
-              
-              console.log('✅ NPM publication workflow triggered successfully via workflow_dispatch');
+
+              console.log('NPM publication workflow triggered via workflow_dispatch');
             } catch (error) {
-              console.log(`⚠️  Could not trigger NPM workflow manually: ${error.message}`);
-              console.log('This is usually fine - the release event should trigger it automatically');
-              
-              // Check if the workflow file exists
-              try {
-                await github.rest.repos.getContent({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  path: '.github/workflows/publish.yml'
-                });
-                console.log('✅ publish.yml workflow file exists');
-              } catch (fileError) {
-                console.log('❌ publish.yml workflow file not found!');
-              }
+              console.log(`Could not trigger NPM workflow: ${error.message}`);
+              console.log('The release event (created with PAT) should trigger it automatically');
             }
-            
-            console.log('');
-            console.log('📋 NPM Publication Status:');
-            console.log('- Release event trigger: Automatic (when release is published)');
-            console.log('- Manual trigger: Attempted as backup');
-            console.log('- Monitor at: https://github.com/' + context.repo.owner + '/' + context.repo.repo + '/actions');
-            console.log('');
-            console.log('If NPM publication does not start within 2-3 minutes:');
-            console.log('1. Check GitHub Actions tab for any workflow runs');
-            console.log('2. Manually trigger "Publish to NPM" workflow');
-            console.log('3. Verify NPM_TOKEN secret is configured correctly');
 
       - name: Summary
         run: |
