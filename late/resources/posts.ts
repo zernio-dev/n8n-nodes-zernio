@@ -1,3 +1,4 @@
+// Post operations: create, update, delete, get, list scheduled social media posts
 import type { LateResourceModule } from "../types";
 import { postsCreatePreSend, postsUpdatePreSend, handleApiErrorResponse } from "../utils/routingHooks";
 import {
