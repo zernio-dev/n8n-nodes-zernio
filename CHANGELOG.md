@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.4] - 2026-04-08
+
+### Changes
+- chore: add module comment to posts resource
+- Merge pull request #25 from zernio-dev/fix/auto-release-publish-trigger
+- fix: use PAT for release creation so publish.yml triggers
+
+
 ## [0.5.3] - 2026-04-07
 
 ### Changes
