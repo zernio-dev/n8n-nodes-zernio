@@ -9,7 +9,7 @@ export const webhooksResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/webhooks/settings",
+					url: "/v1/webhooks/settings",
 				},
 			},
 		},
@@ -20,12 +20,12 @@ export const webhooksResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "POST",
-					url: "/webhooks/settings",
+					url: "/v1/webhooks/settings",
 					body: {
-						name: "={{ $parameter.name || undefined }}",
+						name: "={{ $parameter.name }}",
 						url: "={{ $parameter.url }}",
 						secret: "={{ $parameter.secret || undefined }}",
-						events: "={{ $parameter.events || undefined }}",
+						events: "={{ $parameter.events }}",
 						isActive: "={{ $parameter.isActive }}",
 						customHeaders: "={{ $parameter.customHeaders || undefined }}",
 					},
@@ -39,7 +39,7 @@ export const webhooksResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "PUT",
-					url: "/webhooks/settings",
+					url: "/v1/webhooks/settings",
 					body: {
 						_id: "={{ $parameter.webhookId }}",
 						name: "={{ $parameter.name || undefined }}",
@@ -59,7 +59,7 @@ export const webhooksResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "DELETE",
-					url: "/webhooks/settings",
+					url: "/v1/webhooks/settings",
 					qs: {
 						id: "={{ $parameter.webhookId }}",
 					},
@@ -73,26 +73,9 @@ export const webhooksResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "POST",
-					url: "/webhooks/test",
+					url: "/v1/webhooks/test",
 					body: {
 						webhookId: "={{ $parameter.webhookId }}",
-					},
-				},
-			},
-		},
-		{
-			name: "Get Logs",
-			value: "logs",
-			action: "Get webhook delivery logs",
-			routing: {
-				request: {
-					method: "GET",
-					url: "/webhooks/logs",
-					qs: {
-						limit: "={{ $parameter.limit || 50 }}",
-						status: "={{ $parameter.status || undefined }}",
-						event: "={{ $parameter.event || undefined }}",
-						webhookId: "={{ $parameter.webhookId || undefined }}",
 					},
 				},
 			},
@@ -109,7 +92,7 @@ export const webhooksResource: LateResourceModule = {
 			displayOptions: {
 				show: {
 					resource: ["webhooks"],
-					operation: ["update", "delete", "test", "logs"],
+					operation: ["update", "delete", "test"],
 				},
 			},
 			description: "The unique identifier of the webhook",
@@ -129,8 +112,9 @@ export const webhooksResource: LateResourceModule = {
 					operation: ["create", "update"],
 				},
 			},
-			description: "Webhook name (max 50 characters)",
+			description: "Webhook name (1-50 characters)",
 			placeholder: "My Production Webhook",
+			required: true,
 		},
 
 		// Webhook URL
@@ -145,7 +129,8 @@ export const webhooksResource: LateResourceModule = {
 					operation: ["create", "update"],
 				},
 			},
-			description: "Webhook endpoint URL (must be HTTPS in production)",
+			description:
+				"Webhook endpoint URL (must be a valid URL; whitespace is trimmed before validation)",
 			placeholder: "https://your-server.com/webhook",
 			required: true,
 		},
@@ -198,6 +183,11 @@ export const webhooksResource: LateResourceModule = {
 						"Triggered when a post partially succeeds (some platforms failed)",
 				},
 				{
+					name: "Post Cancelled",
+					value: "post.cancelled",
+					description: "Triggered when a scheduled post is cancelled",
+				},
+				{
 					name: "Post Recycled",
 					value: "post.recycled",
 					description: "Triggered when a post is recycled",
@@ -223,6 +213,16 @@ export const webhooksResource: LateResourceModule = {
 					value: "comment.received",
 					description: "Triggered when a new comment is received",
 				},
+				{
+					name: "Review New",
+					value: "review.new",
+					description: "Triggered when a new review is received",
+				},
+				{
+					name: "Review Updated",
+					value: "review.updated",
+					description: "Triggered when a review is updated",
+				},
 			],
 			default: ["post.published", "post.failed"],
 			displayOptions: {
@@ -232,6 +232,7 @@ export const webhooksResource: LateResourceModule = {
 				},
 			},
 			description: "Select which events should trigger webhook notifications",
+			required: true,
 		},
 
 		// Active status
@@ -246,7 +247,8 @@ export const webhooksResource: LateResourceModule = {
 					operation: ["create", "update"],
 				},
 			},
-			description: "Enable or disable webhook delivery",
+			description:
+				"Enable or disable webhook delivery. Defaults to true when omitted. Webhooks may be automatically disabled after consecutive delivery failures.",
 		},
 
 		// Custom headers
@@ -264,107 +266,6 @@ export const webhooksResource: LateResourceModule = {
 			description:
 				"Custom headers to include in webhook requests (JSON object of key/value pairs)",
 			placeholder: '{ "X-Custom-Header": "value" }',
-		},
-
-		// Logs: Limit
-		{
-			displayName: "Limit",
-			name: "limit",
-			type: "number",
-			default: 50,
-			typeOptions: {
-				minValue: 1,
-				maxValue: 100,
-			},
-			displayOptions: {
-				show: {
-					resource: ["webhooks"],
-					operation: ["logs"],
-				},
-			},
-			description: "Maximum number of logs to return (max 100)",
-		},
-
-		// Logs: Status
-		{
-			displayName: "Status",
-			name: "status",
-			type: "options",
-			options: [
-				{
-					name: "Success",
-					value: "success",
-				},
-				{
-					name: "Failed",
-					value: "failed",
-				},
-			],
-			default: "",
-			displayOptions: {
-				show: {
-					resource: ["webhooks"],
-					operation: ["logs"],
-				},
-			},
-			description: "Filter logs by delivery status",
-		},
-
-		// Logs: Event
-		{
-			displayName: "Event",
-			name: "event",
-			type: "options",
-			options: [
-				{
-					name: "Post Scheduled",
-					value: "post.scheduled",
-				},
-				{
-					name: "Post Published",
-					value: "post.published",
-				},
-				{
-					name: "Post Failed",
-					value: "post.failed",
-				},
-				{
-					name: "Post Partial",
-					value: "post.partial",
-				},
-				{
-					name: "Post Recycled",
-					value: "post.recycled",
-				},
-				{
-					name: "Account Connected",
-					value: "account.connected",
-				},
-				{
-					name: "Account Disconnected",
-					value: "account.disconnected",
-				},
-				{
-					name: "Message Received",
-					value: "message.received",
-				},
-				{
-					name: "Comment Received",
-					value: "comment.received",
-				},
-				{
-					name: "Webhook Test",
-					value: "webhook.test",
-				},
-			],
-			default: "",
-			displayOptions: {
-				show: {
-					resource: ["webhooks"],
-					operation: ["logs"],
-				},
-			},
-			description: "Filter logs by event type",
 		},
 	],
 };

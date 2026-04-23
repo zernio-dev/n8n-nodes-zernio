@@ -9,7 +9,7 @@ export const invitesResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "POST",
-					url: "/invite/tokens",
+					url: "/v1/invite/tokens",
 					body: {
 						scope: "={{ $parameter.scope }}",
 						profileIds:

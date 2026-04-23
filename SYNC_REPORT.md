@@ -1,14 +1,14 @@
 # n8n Node Sync Report
 
-**Generated:** 2026-03-24T09:12:15.655Z
+**Generated:** 2026-04-23T14:55:31.697Z
 **API Version:** 1.0.1
-**Total Endpoints:** 225
+**Total Endpoints:** 259
 
 ## Summary
 
 | Metric | Count |
 |--------|-------|
-| New/Missing Endpoints | 57 |
+| New/Missing Endpoints | 62 |
 | Missing Resources | 0 |
 
 ## New Endpoints to Implement
@@ -18,11 +18,16 @@ These endpoints exist in the API but are not implemented in the n8n node:
 | Tag | Method | Path | Operation ID |
 |-----|--------|------|--------------|
 | Messages | GET | /v1/inbox/conversations | listInboxConversations |
+| Messages | POST | /v1/inbox/conversations | createInboxConversation |
 | Messages | GET | /v1/inbox/conversations/{conversationId} | getInboxConversation |
 | Messages | PUT | /v1/inbox/conversations/{conversationId} | updateInboxConversation |
 | Messages | GET | /v1/inbox/conversations/{conversationId}/messages | getInboxConversationMessages |
 | Messages | POST | /v1/inbox/conversations/{conversationId}/messages | sendInboxMessage |
 | Messages | PATCH | /v1/inbox/conversations/{conversationId}/messages/{messageId} | editInboxMessage |
+| Messages | DELETE | /v1/inbox/conversations/{conversationId}/messages/{messageId} | deleteInboxMessage |
+| Messages | POST | /v1/inbox/conversations/{conversationId}/typing | sendTypingIndicator |
+| Messages | POST | /v1/inbox/conversations/{conversationId}/messages/{messageId}/reactions | addMessageReaction |
+| Messages | DELETE | /v1/inbox/conversations/{conversationId}/messages/{messageId}/reactions | removeMessageReaction |
 | Comments | GET | /v1/inbox/comments | listInboxComments |
 | Comments | GET | /v1/inbox/comments/{postId} | getInboxPostComments |
 | Comments | POST | /v1/inbox/comments/{postId} | replyToInboxPost |
@@ -77,18 +82,6 @@ These endpoints exist in the API but are not implemented in the n8n node:
 
 ## Endpoints by Tag
 
-### ⚠️ Tools
-
-- `GET` /v1/tools/youtube/download
-- `GET` /v1/tools/youtube/transcript
-- `GET` /v1/tools/instagram/download
-- `POST` /v1/tools/instagram/hashtag-checker
-- `GET` /v1/tools/tiktok/download
-- `GET` /v1/tools/twitter/download
-- `GET` /v1/tools/facebook/download
-- `GET` /v1/tools/linkedin/download
-- `GET` /v1/tools/bluesky/download
-
 ### ⚠️ Validate
 
 - `POST` /v1/tools/validate/post-length
@@ -102,11 +95,14 @@ These endpoints exist in the API but are not implemented in the n8n node:
 - `GET` /v1/analytics/youtube/daily-views
 - `GET` /v1/analytics/instagram/account-insights
 - `GET` /v1/analytics/instagram/demographics
+- `GET` /v1/analytics/youtube/demographics
 - `GET` /v1/analytics/daily-metrics
 - `GET` /v1/analytics/best-time
 - `GET` /v1/analytics/content-decay
 - `GET` /v1/analytics/posting-frequency
 - `GET` /v1/analytics/post-timeline
+- `GET` /v1/analytics/googlebusiness/performance
+- `GET` /v1/analytics/googlebusiness/search-keywords
 - `GET` /v1/accounts/{accountId}/linkedin-aggregate-analytics
 - `GET` /v1/accounts/{accountId}/linkedin-post-analytics
 - `GET` /v1/accounts/{accountId}/linkedin-post-reactions
@@ -141,6 +137,8 @@ These endpoints exist in the API but are not implemented in the n8n node:
 - `POST` /v1/posts/bulk-upload
 - `POST` /v1/posts/{postId}/retry
 - `POST` /v1/posts/{postId}/unpublish
+- `POST` /v1/posts/{postId}/edit
+- `POST` /v1/posts/{postId}/update-metadata
 
 ### ⚠️ Users
 
@@ -179,6 +177,7 @@ These endpoints exist in the API but are not implemented in the n8n node:
 
 - `GET` /v1/connect/{platform}
 - `POST` /v1/connect/{platform}
+- `GET` /v1/connect/{platform}/ads
 - `GET` /v1/connect/facebook/select-page
 - `POST` /v1/connect/facebook/select-page
 - `GET` /v1/connect/googlebusiness/locations
@@ -201,6 +200,8 @@ These endpoints exist in the API but are not implemented in the n8n node:
 - `PUT` /v1/accounts/{accountId}/linkedin-organization
 - `GET` /v1/accounts/{accountId}/pinterest-boards
 - `PUT` /v1/accounts/{accountId}/pinterest-boards
+- `GET` /v1/accounts/{accountId}/youtube-playlists
+- `PUT` /v1/accounts/{accountId}/youtube-playlists
 - `GET` /v1/accounts/{accountId}/gmb-locations
 - `PUT` /v1/accounts/{accountId}/gmb-locations
 - `GET` /v1/accounts/{accountId}/reddit-subreddits
@@ -210,6 +211,7 @@ These endpoints exist in the API but are not implemented in the n8n node:
 ### ⚠️ GMB Reviews
 
 - `GET` /v1/accounts/{accountId}/gmb-reviews
+- `POST` /v1/accounts/{accountId}/gmb-reviews/batch
 
 ### ⚠️ GMB Food Menus
 
@@ -237,10 +239,22 @@ These endpoints exist in the API but are not implemented in the n8n node:
 - `GET` /v1/accounts/{accountId}/gmb-place-actions
 - `POST` /v1/accounts/{accountId}/gmb-place-actions
 - `DELETE` /v1/accounts/{accountId}/gmb-place-actions
+- `PATCH` /v1/accounts/{accountId}/gmb-place-actions
+
+### ⚠️ GMB Services
+
+- `GET` /v1/accounts/{accountId}/gmb-services
+- `PUT` /v1/accounts/{accountId}/gmb-services
 
 ### ⚠️ LinkedIn Mentions
 
 - `GET` /v1/accounts/{accountId}/linkedin-mentions
+
+### ⚠️ Discord
+
+- `GET` /v1/accounts/{accountId}/discord-settings
+- `PATCH` /v1/accounts/{accountId}/discord-settings
+- `GET` /v1/accounts/{accountId}/discord-channels
 
 ### ✅ Queue
 
@@ -258,22 +272,25 @@ These endpoints exist in the API but are not implemented in the n8n node:
 - `PUT` /v1/webhooks/settings
 - `DELETE` /v1/webhooks/settings
 - `POST` /v1/webhooks/test
-- `GET` /v1/webhooks/logs
 
 ### ✅ Logs
 
-- `GET` /v1/posts/logs
-- `GET` /v1/connections/logs
-- `GET` /v1/posts/{postId}/logs
+- `GET` /v1/logs
 
 ### ⚠️ Messages
 
 - `GET` /v1/inbox/conversations 🆕
+- `POST` /v1/inbox/conversations 🆕
 - `GET` /v1/inbox/conversations/{conversationId} 🆕
 - `PUT` /v1/inbox/conversations/{conversationId} 🆕
 - `GET` /v1/inbox/conversations/{conversationId}/messages 🆕
 - `POST` /v1/inbox/conversations/{conversationId}/messages 🆕
 - `PATCH` /v1/inbox/conversations/{conversationId}/messages/{messageId} 🆕
+- `DELETE` /v1/inbox/conversations/{conversationId}/messages/{messageId} 🆕
+- `POST` /v1/inbox/conversations/{conversationId}/typing 🆕
+- `POST` /v1/inbox/conversations/{conversationId}/messages/{messageId}/reactions 🆕
+- `DELETE` /v1/inbox/conversations/{conversationId}/messages/{messageId}/reactions 🆕
+- `POST` /v1/media/upload-direct
 
 ### ⚠️ Account Settings
 
@@ -316,38 +333,27 @@ These endpoints exist in the API but are not implemented in the n8n node:
 
 ### ⚠️ WhatsApp
 
-- `POST` /v1/whatsapp/bulk
-- `GET` /v1/whatsapp/contacts
-- `POST` /v1/whatsapp/contacts
-- `GET` /v1/whatsapp/contacts/{contactId}
-- `PUT` /v1/whatsapp/contacts/{contactId}
-- `DELETE` /v1/whatsapp/contacts/{contactId}
-- `POST` /v1/whatsapp/contacts/import
-- `POST` /v1/whatsapp/contacts/bulk
-- `DELETE` /v1/whatsapp/contacts/bulk
-- `GET` /v1/whatsapp/groups
-- `POST` /v1/whatsapp/groups
-- `DELETE` /v1/whatsapp/groups
 - `GET` /v1/whatsapp/templates
 - `POST` /v1/whatsapp/templates
 - `GET` /v1/whatsapp/templates/{templateName}
 - `PATCH` /v1/whatsapp/templates/{templateName}
 - `DELETE` /v1/whatsapp/templates/{templateName}
-- `GET` /v1/whatsapp/broadcasts
-- `POST` /v1/whatsapp/broadcasts
-- `GET` /v1/whatsapp/broadcasts/{broadcastId}
-- `DELETE` /v1/whatsapp/broadcasts/{broadcastId}
-- `POST` /v1/whatsapp/broadcasts/{broadcastId}/send
-- `POST` /v1/whatsapp/broadcasts/{broadcastId}/schedule
-- `DELETE` /v1/whatsapp/broadcasts/{broadcastId}/schedule
-- `GET` /v1/whatsapp/broadcasts/{broadcastId}/recipients
-- `PATCH` /v1/whatsapp/broadcasts/{broadcastId}/recipients
-- `DELETE` /v1/whatsapp/broadcasts/{broadcastId}/recipients
 - `GET` /v1/whatsapp/business-profile
 - `POST` /v1/whatsapp/business-profile
 - `POST` /v1/whatsapp/business-profile/photo
 - `GET` /v1/whatsapp/business-profile/display-name
 - `POST` /v1/whatsapp/business-profile/display-name
+- `GET` /v1/whatsapp/wa-groups
+- `POST` /v1/whatsapp/wa-groups
+- `GET` /v1/whatsapp/wa-groups/{groupId}
+- `POST` /v1/whatsapp/wa-groups/{groupId}
+- `DELETE` /v1/whatsapp/wa-groups/{groupId}
+- `POST` /v1/whatsapp/wa-groups/{groupId}/participants
+- `DELETE` /v1/whatsapp/wa-groups/{groupId}/participants
+- `POST` /v1/whatsapp/wa-groups/{groupId}/invite-link
+- `GET` /v1/whatsapp/wa-groups/{groupId}/join-requests
+- `POST` /v1/whatsapp/wa-groups/{groupId}/join-requests
+- `DELETE` /v1/whatsapp/wa-groups/{groupId}/join-requests
 
 ### ⚠️ WhatsApp Phone Numbers
 
@@ -355,6 +361,19 @@ These endpoints exist in the API but are not implemented in the n8n node:
 - `POST` /v1/whatsapp/phone-numbers/purchase
 - `GET` /v1/whatsapp/phone-numbers/{phoneNumberId}
 - `DELETE` /v1/whatsapp/phone-numbers/{phoneNumberId}
+
+### ⚠️ WhatsApp Flows
+
+- `GET` /v1/whatsapp/flows
+- `POST` /v1/whatsapp/flows
+- `GET` /v1/whatsapp/flows/{flowId}
+- `PATCH` /v1/whatsapp/flows/{flowId}
+- `DELETE` /v1/whatsapp/flows/{flowId}
+- `GET` /v1/whatsapp/flows/{flowId}/json
+- `PUT` /v1/whatsapp/flows/{flowId}/json
+- `POST` /v1/whatsapp/flows/{flowId}/publish
+- `POST` /v1/whatsapp/flows/{flowId}/deprecate
+- `POST` /v1/whatsapp/flows/send
 
 ### ⚠️ Contacts
 
@@ -409,4 +428,39 @@ These endpoints exist in the API but are not implemented in the n8n node:
 - `PATCH` /v1/comment-automations/{automationId} 🆕
 - `DELETE` /v1/comment-automations/{automationId} 🆕
 - `GET` /v1/comment-automations/{automationId}/logs 🆕
+
+### ⚠️ Ads
+
+- `GET` /v1/ads
+- `GET` /v1/ads/{adId}
+- `PUT` /v1/ads/{adId}
+- `DELETE` /v1/ads/{adId}
+- `GET` /v1/ads/{adId}/analytics
+- `GET` /v1/ads/{adId}/comments
+- `GET` /v1/ads/accounts
+- `POST` /v1/ads/boost
+- `POST` /v1/ads/create
+- `GET` /v1/ads/interests
+- `POST` /v1/ads/conversions
+- `GET` /v1/accounts/{accountId}/conversion-destinations
+
+### ⚠️ Ad Campaigns
+
+- `GET` /v1/ads/campaigns
+- `PUT` /v1/ads/campaigns/{campaignId}/status
+- `PUT` /v1/ads/campaigns/{campaignId}
+- `DELETE` /v1/ads/campaigns/{campaignId}
+- `POST` /v1/ads/campaigns/bulk-status
+- `POST` /v1/ads/campaigns/{campaignId}/duplicate
+- `PUT` /v1/ads/ad-sets/{adSetId}
+- `PUT` /v1/ads/ad-sets/{adSetId}/status
+- `GET` /v1/ads/tree
+
+### ⚠️ Ad Audiences
+
+- `GET` /v1/ads/audiences
+- `POST` /v1/ads/audiences
+- `GET` /v1/ads/audiences/{audienceId}
+- `DELETE` /v1/ads/audiences/{audienceId}
+- `POST` /v1/ads/audiences/{audienceId}/users
 

@@ -9,7 +9,7 @@ export const apiKeysResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/api-keys",
+					url: "/v1/api-keys",
 				},
 			},
 		},
@@ -20,7 +20,7 @@ export const apiKeysResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "POST",
-					url: "/api-keys",
+					url: "/v1/api-keys",
 					body: {
 						name: "={{ $parameter.name }}",
 						expiresIn: "={{ $parameter.expiresIn || undefined }}",
@@ -38,7 +38,7 @@ export const apiKeysResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "DELETE",
-					url: "=/api-keys/{{ $parameter.keyId }}",
+					url: "=/v1/api-keys/{{ $parameter.keyId }}",
 				},
 			},
 		},
@@ -118,7 +118,7 @@ export const apiKeysResource: LateResourceModule = {
 			displayName: "Profile IDs",
 			name: "profileIds",
 			type: "string",
-			default: "",
+			default: [],
 			displayOptions: {
 				show: {
 					resource: ["apiKeys"],
@@ -126,9 +126,12 @@ export const apiKeysResource: LateResourceModule = {
 					scope: ["profiles"],
 				},
 			},
-			description: "Comma-separated list of profile IDs this key can access. Required when Scope is set to 'Profiles'.",
-			placeholder: "6507a1b2c3d4e5f6a7b8c9d0, 6507a1b2c3d4e5f6a7b8c9d1",
+			description: "List of profile IDs this key can access. Required when Scope is set to 'Profiles'.",
+			placeholder: "6507a1b2c3d4e5f6a7b8c9d0",
 			required: true,
+			typeOptions: {
+				multipleValues: true,
+			},
 		},
 
 		// Permission for create

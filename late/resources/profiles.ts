@@ -10,7 +10,7 @@ export const profilesResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/profiles",
+					url: "/v1/profiles",
 					qs: {
 						includeOverLimit: "={{ $parameter.includeOverLimit || false }}",
 					},
@@ -24,7 +24,7 @@ export const profilesResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "=/profiles/{{ $parameter.profileId }}",
+					url: "=/v1/profiles/{{ $parameter.profileId }}",
 				},
 			},
 		},
@@ -35,7 +35,7 @@ export const profilesResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "POST",
-					url: "/profiles",
+					url: "/v1/profiles",
 					body: {
 						name: "={{ $parameter.name }}",
 						description: "={{ $parameter.description || '' }}",
@@ -51,7 +51,7 @@ export const profilesResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "PUT",
-					url: "=/profiles/{{ $parameter.profileId }}",
+					url: "=/v1/profiles/{{ $parameter.profileId }}",
 					body: {
 						name: "={{ $parameter.name || undefined }}",
 						description: "={{ $parameter.description || undefined }}",
@@ -68,7 +68,7 @@ export const profilesResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "DELETE",
-					url: "=/profiles/{{ $parameter.profileId }}",
+					url: "=/v1/profiles/{{ $parameter.profileId }}",
 				},
 			},
 		},

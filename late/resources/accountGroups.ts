@@ -9,7 +9,7 @@ export const accountGroupsResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "GET",
-					url: "/account-groups",
+					url: "/v1/account-groups",
 				},
 			},
 		},
@@ -20,7 +20,7 @@ export const accountGroupsResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "POST",
-					url: "/account-groups",
+					url: "/v1/account-groups",
 					body: {
 						name: "={{ $parameter.name }}",
 						accountIds:
@@ -36,7 +36,7 @@ export const accountGroupsResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "PUT",
-					url: "=/account-groups/{{ $parameter.groupId }}",
+					url: "=/v1/account-groups/{{ $parameter.groupId }}",
 					body: {
 						name: "={{ $parameter.name || undefined }}",
 						accountIds:
@@ -52,7 +52,7 @@ export const accountGroupsResource: LateResourceModule = {
 			routing: {
 				request: {
 					method: "DELETE",
-					url: "=/account-groups/{{ $parameter.groupId }}",
+					url: "=/v1/account-groups/{{ $parameter.groupId }}",
 				},
 			},
 		},

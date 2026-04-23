@@ -38,11 +38,11 @@ export const mediaResource: LateResourceModule = {
     {
       name: "Get Presigned URL",
       value: "presign",
-      action: "Get presigned URL for direct upload",
+      action: "Get upload URL",
       routing: {
         request: {
           method: "POST",
-          url: "/media/presign",
+          url: "/v1/media/presign",
           body: {
             filename: "={{ $parameter.filename }}",
             contentType: "={{ $parameter.contentType }}",
@@ -180,7 +180,7 @@ export const mediaResource: LateResourceModule = {
         },
       },
       description:
-        "MIME type of the file. Returns uploadUrl and publicUrl. PUT your file to uploadUrl, then use publicUrl in posts.",
+        "MIME type of the file. Returns uploadUrl and publicUrl. PUT your file to the uploadUrl, then use publicUrl in posts.",
       required: true,
     },
     {

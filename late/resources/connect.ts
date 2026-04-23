@@ -1,5 +1,6 @@
 import type { LateResourceModule } from "../types";
 import {
+	buildAccountIdField,
 	buildProfileIdField,
 	buildTempTokenField,
 } from "../utils/commonFields";
@@ -40,6 +41,23 @@ export const connectResource: LateResourceModule = {
 			},
 		},
 		{
+			name: "Connect Ads",
+			value: "connectAds",
+			action: "Connect ads account",
+			routing: {
+				request: {
+					method: "GET",
+					url: "=/connect/{{ $parameter.adsPlatform }}/ads",
+					qs: {
+						profileId: "={{ $parameter.profileId }}",
+						accountId: "={{ $parameter.accountId || undefined }}",
+						redirect_url: "={{ $parameter.redirectUrl || undefined }}",
+						headless: "={{ $parameter.headless || undefined }}",
+					},
+				},
+			},
+		},
+		{
 			name: "List Facebook Pages (Headless)",
 			value: "listFacebookPages",
 			action: "List Facebook pages",
@@ -66,7 +84,7 @@ export const connectResource: LateResourceModule = {
 						profileId: "={{ $parameter.profileId }}",
 						pageId: "={{ $parameter.pageId }}",
 						tempToken: "={{ $parameter.tempToken }}",
-						userProfile: "={{ $parameter.userProfile || undefined }}",
+						userProfile: "={{ $parameter.userProfile }}",
 						redirect_url: "={{ $parameter.redirectUrl || undefined }}",
 					},
 				},
@@ -81,8 +99,9 @@ export const connectResource: LateResourceModule = {
 					method: "GET",
 					url: "/connect/googlebusiness/locations",
 					qs: {
-						profileId: "={{ $parameter.profileId }}",
-						tempToken: "={{ $parameter.tempToken }}",
+						profileId: "={{ $parameter.profileId || undefined }}",
+						pendingDataToken: "={{ $parameter.pendingDataToken || undefined }}",
+						tempToken: "={{ $parameter.tempToken || undefined }}",
 					},
 				},
 			},
@@ -98,8 +117,7 @@ export const connectResource: LateResourceModule = {
 					body: {
 						profileId: "={{ $parameter.profileId }}",
 						locationId: "={{ $parameter.locationId }}",
-						tempToken: "={{ $parameter.tempToken }}",
-						userProfile: "={{ $parameter.userProfile }}",
+						pendingDataToken: "={{ $parameter.pendingDataToken }}",
 						redirect_url: "={{ $parameter.redirectUrl || undefined }}",
 					},
 				},
@@ -305,7 +323,177 @@ export const connectResource: LateResourceModule = {
 					method: "PATCH",
 					url: "/connect/telegram",
 					qs: {
-						code: "={{ $parameter.code }}",
+						code: "={{ $parameter.telegramCode }}",
+					},
+				},
+			},
+		},
+
+		{
+			name: "List Account Facebook Pages",
+			value: "getFacebookPages",
+			action: "List account Facebook pages",
+			routing: {
+				request: {
+					method: "GET",
+					url: "=/accounts/{{ $parameter.accountId }}/facebook-page",
+				},
+			},
+		},
+		{
+			name: "Update Account Facebook Page",
+			value: "updateFacebookPage",
+			action: "Update account Facebook page",
+			routing: {
+				request: {
+					method: "PUT",
+					url: "=/accounts/{{ $parameter.accountId }}/facebook-page",
+					body: {
+						selectedPageId: "={{ $parameter.selectedPageId }}",
+					},
+				},
+			},
+		},
+		{
+			name: "List Account LinkedIn Organizations",
+			value: "getLinkedInOrganizations",
+			action: "List account LinkedIn orgs",
+			routing: {
+				request: {
+					method: "GET",
+					url: "=/accounts/{{ $parameter.accountId }}/linkedin-organizations",
+				},
+			},
+		},
+		{
+			name: "Update Account LinkedIn Organization",
+			value: "updateLinkedInOrganization",
+			action: "Update account LinkedIn org selection",
+			routing: {
+				request: {
+					method: "PUT",
+					url: "=/accounts/{{ $parameter.accountId }}/linkedin-organization",
+					body: {
+						accountType: "={{ $parameter.accountType }}",
+						selectedOrganization:
+							"={{ $parameter.selectedOrganization || undefined }}",
+					},
+				},
+			},
+		},
+		{
+			name: "List Account Pinterest Boards",
+			value: "getPinterestBoards",
+			action: "List account Pinterest boards",
+			routing: {
+				request: {
+					method: "GET",
+					url: "=/accounts/{{ $parameter.accountId }}/pinterest-boards",
+				},
+			},
+		},
+		{
+			name: "Update Account Pinterest Default Board",
+			value: "updatePinterestBoards",
+			action: "Update account Pinterest default board",
+			routing: {
+				request: {
+					method: "PUT",
+					url: "=/accounts/{{ $parameter.accountId }}/pinterest-boards",
+					body: {
+						defaultBoardId: "={{ $parameter.defaultBoardId }}",
+						defaultBoardName: "={{ $parameter.defaultBoardName || undefined }}",
+					},
+				},
+			},
+		},
+		{
+			name: "List Account YouTube Playlists",
+			value: "getYoutubePlaylists",
+			action: "List account YouTube playlists",
+			routing: {
+				request: {
+					method: "GET",
+					url: "=/accounts/{{ $parameter.accountId }}/youtube-playlists",
+				},
+			},
+		},
+		{
+			name: "Update Account YouTube Default Playlist",
+			value: "updateYoutubeDefaultPlaylist",
+			action: "Update account YouTube default playlist",
+			routing: {
+				request: {
+					method: "PUT",
+					url: "=/accounts/{{ $parameter.accountId }}/youtube-playlists",
+					body: {
+						defaultPlaylistId: "={{ $parameter.defaultPlaylistId }}",
+						defaultPlaylistName:
+							"={{ $parameter.defaultPlaylistName || undefined }}",
+					},
+				},
+			},
+		},
+		{
+			name: "List Account GBP Locations",
+			value: "getGmbLocations",
+			action: "List account GBP locations",
+			routing: {
+				request: {
+					method: "GET",
+					url: "=/accounts/{{ $parameter.accountId }}/gmb-locations",
+				},
+			},
+		},
+		{
+			name: "Update Account GBP Location",
+			value: "updateGmbLocation",
+			action: "Update account GBP location",
+			routing: {
+				request: {
+					method: "PUT",
+					url: "=/accounts/{{ $parameter.accountId }}/gmb-locations",
+					body: {
+						selectedLocationId: "={{ $parameter.selectedLocationId }}",
+					},
+				},
+			},
+		},
+		{
+			name: "List Account Reddit Subreddits",
+			value: "getRedditSubreddits",
+			action: "List account Reddit subreddits",
+			routing: {
+				request: {
+					method: "GET",
+					url: "=/accounts/{{ $parameter.accountId }}/reddit-subreddits",
+				},
+			},
+		},
+		{
+			name: "Update Account Reddit Default Subreddit",
+			value: "updateRedditSubreddits",
+			action: "Update account Reddit default subreddit",
+			routing: {
+				request: {
+					method: "PUT",
+					url: "=/accounts/{{ $parameter.accountId }}/reddit-subreddits",
+					body: {
+						defaultSubreddit: "={{ $parameter.defaultSubreddit }}",
+					},
+				},
+			},
+		},
+		{
+			name: "List Reddit Flairs",
+			value: "getRedditFlairs",
+			action: "List subreddit flairs",
+			routing: {
+				request: {
+					method: "GET",
+					url: "=/accounts/{{ $parameter.accountId }}/reddit-flairs",
+					qs: {
+						subreddit: "={{ $parameter.subreddit }}",
 					},
 				},
 			},
@@ -334,9 +522,63 @@ export const connectResource: LateResourceModule = {
 		},
 
 		{
+			displayName: "Ads Platform",
+			name: "adsPlatform",
+			type: "options",
+			options: [
+				{
+					name: "Facebook",
+					value: "facebook",
+					description: "Connect Meta Ads via an existing Facebook posting account",
+				},
+				{
+					name: "Instagram",
+					value: "instagram",
+					description: "Connect Meta Ads via an existing Instagram posting account",
+				},
+				{
+					name: "LinkedIn",
+					value: "linkedin",
+					description: "Connect LinkedIn Ads via an existing LinkedIn posting account",
+				},
+				{
+					name: "TikTok",
+					value: "tiktok",
+					description:
+						"Connect TikTok Ads via separate-token OAuth (requires an existing TikTok posting accountId)",
+				},
+				{
+					name: "Twitter (X)",
+					value: "twitter",
+					description:
+						"Connect X Ads via separate-token OAuth (requires an existing Twitter posting accountId)",
+				},
+				{
+					name: "Pinterest",
+					value: "pinterest",
+					description: "Connect Pinterest Ads via an existing Pinterest posting account",
+				},
+				{
+					name: "Google Ads",
+					value: "googleads",
+					description: "Connect Google Ads via standalone OAuth",
+				},
+			],
+			default: "facebook",
+			displayOptions: {
+				show: {
+					resource: ["connect"],
+					operation: ["connectAds"],
+				},
+			},
+			description: "Platform to connect ads for (ads-enabled platforms only).",
+		},
+
+		{
 			...buildProfileIdField("connect", [
 				"getConnectUrl",
 				"handleOAuthCallback",
+				"connectAds",
 				"listFacebookPages",
 				"selectFacebookPage",
 				"listGoogleBusinessLocations",
@@ -356,6 +598,15 @@ export const connectResource: LateResourceModule = {
 		},
 
 		{
+			...buildAccountIdField(
+				"connect",
+				["connectAds"],
+				"Account ID",
+				"Existing SocialAccount ID. Required for separate-token ads platforms (TikTok, Twitter/X). Ignored for same-token and standalone platforms.",
+			),
+		},
+
+		{
 			displayName: "Redirect URL",
 			name: "redirectUrl",
 			type: "string",
@@ -365,6 +616,7 @@ export const connectResource: LateResourceModule = {
 					resource: ["connect"],
 					operation: [
 						"getConnectUrl",
+						"connectAds",
 						"selectFacebookPage",
 						"selectGoogleBusinessLocation",
 						"selectLinkedInOrganization",
@@ -386,7 +638,7 @@ export const connectResource: LateResourceModule = {
 			displayOptions: {
 				show: {
 					resource: ["connect"],
-					operation: ["getConnectUrl"],
+					operation: ["getConnectUrl", "connectAds"],
 				},
 			},
 			description:
@@ -430,7 +682,6 @@ export const connectResource: LateResourceModule = {
 				"listFacebookPages",
 				"selectFacebookPage",
 				"listGoogleBusinessLocations",
-				"selectGoogleBusinessLocation",
 				"listLinkedInOrganizations",
 				"selectLinkedInOrganization",
 				"listPinterestBoardsForSelection",
@@ -439,8 +690,25 @@ export const connectResource: LateResourceModule = {
 				"selectSnapchatProfile",
 			]),
 			description:
-				"Temporary access token returned via the OAuth redirect in headless flows. Pass it to list/select endpoints to complete selection.",
+				"Temporary access token returned via the OAuth redirect in headless flows. Pass it to list/select endpoints to complete selection. For Google Business, prefer pendingDataToken when available.",
 			placeholder: "EAAxxxxx...",
+		},
+
+		{
+			displayName: "Pending Data Token",
+			name: "pendingDataToken",
+			type: "string",
+			default: "",
+			required: false,
+			displayOptions: {
+				show: {
+					resource: ["connect"],
+					operation: ["listGoogleBusinessLocations", "selectGoogleBusinessLocation"],
+				},
+			},
+			description:
+				"Token from the OAuth callback redirect (pendingDataToken). Preferred for Google Business because it preserves server-side token storage. Required for selecting a GBP location.",
+			placeholder: "pdt_...",
 		},
 
 		{
@@ -486,15 +754,13 @@ export const connectResource: LateResourceModule = {
 					resource: ["connect"],
 					operation: [
 						"selectFacebookPage",
-						"selectGoogleBusinessLocation",
 						"selectLinkedInOrganization",
 						"selectPinterestBoard",
 						"selectSnapchatProfile",
 					],
 				},
 			},
-			description:
-				"User profile object from the OAuth redirect. For Google Business selection, this should include refreshToken and should always be included.",
+			description: "User profile object from the OAuth redirect.",
 		},
 
 		{
@@ -552,7 +818,7 @@ export const connectResource: LateResourceModule = {
 			displayOptions: {
 				show: {
 					resource: ["connect"],
-					operation: ["selectLinkedInOrganization"],
+					operation: ["selectLinkedInOrganization", "updateLinkedInOrganization"],
 				},
 			},
 			description:
@@ -568,7 +834,7 @@ export const connectResource: LateResourceModule = {
 			displayOptions: {
 				show: {
 					resource: ["connect"],
-					operation: ["selectLinkedInOrganization"],
+					operation: ["selectLinkedInOrganization", "updateLinkedInOrganization"],
 				},
 			},
 			description:
@@ -592,7 +858,7 @@ export const connectResource: LateResourceModule = {
 				},
 			},
 			description:
-				"Short-lived connect token from the OAuth redirect. Required for some headless selection list endpoints.",
+				"Short-lived connect token from the OAuth redirect. Required for some headless selection list endpoints (Pinterest, Snapchat).",
 			placeholder: "ct_...",
 		},
 
@@ -789,7 +1055,7 @@ export const connectResource: LateResourceModule = {
 		},
 		{
 			displayName: "Code",
-			name: "code",
+			name: "telegramCode",
 			type: "string",
 			default: "",
 			required: true,
@@ -801,6 +1067,154 @@ export const connectResource: LateResourceModule = {
 			},
 			description: "The access code to check status for.",
 			placeholder: "ZRN-ABC123",
+		},
+
+		{
+			...buildAccountIdField("connect", [
+				"getFacebookPages",
+				"updateFacebookPage",
+				"getLinkedInOrganizations",
+				"updateLinkedInOrganization",
+				"getPinterestBoards",
+				"updatePinterestBoards",
+				"getYoutubePlaylists",
+				"updateYoutubeDefaultPlaylist",
+				"getGmbLocations",
+				"updateGmbLocation",
+				"getRedditSubreddits",
+				"updateRedditSubreddits",
+				"getRedditFlairs",
+			]),
+			description:
+				"The SocialAccount ID. Get account IDs from 'Accounts > List' after connecting an account.",
+			placeholder: "acct_123_abc",
+		},
+
+		{
+			displayName: "Selected Page ID",
+			name: "selectedPageId",
+			type: "string",
+			default: "",
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ["connect"],
+					operation: ["updateFacebookPage"],
+				},
+			},
+			description: "The Facebook Page ID to set as active for this account.",
+			placeholder: "123456789012345",
+		},
+
+		{
+			displayName: "Default Board ID",
+			name: "defaultBoardId",
+			type: "string",
+			default: "",
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ["connect"],
+					operation: ["updatePinterestBoards"],
+				},
+			},
+			description: "Default Pinterest board ID to use when publishing pins.",
+			placeholder: "123456789012345678",
+		},
+		{
+			displayName: "Default Board Name",
+			name: "defaultBoardName",
+			type: "string",
+			default: "",
+			required: false,
+			displayOptions: {
+				show: {
+					resource: ["connect"],
+					operation: ["updatePinterestBoards"],
+				},
+			},
+			description: "Optional display name for the default board.",
+			placeholder: "Marketing Ideas",
+		},
+
+		{
+			displayName: "Default Playlist ID",
+			name: "defaultPlaylistId",
+			type: "string",
+			default: "",
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ["connect"],
+					operation: ["updateYoutubeDefaultPlaylist"],
+				},
+			},
+			description: "Default YouTube playlist ID for this account.",
+			placeholder: "PLxxxxxxxxxxxxx",
+		},
+		{
+			displayName: "Default Playlist Name",
+			name: "defaultPlaylistName",
+			type: "string",
+			default: "",
+			required: false,
+			displayOptions: {
+				show: {
+					resource: ["connect"],
+					operation: ["updateYoutubeDefaultPlaylist"],
+				},
+			},
+			description: "Optional display name for the default playlist.",
+			placeholder: "Tutorials",
+		},
+
+		{
+			displayName: "Selected Location ID",
+			name: "selectedLocationId",
+			type: "string",
+			default: "",
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ["connect"],
+					operation: ["updateGmbLocation"],
+				},
+			},
+			description: "The GBP location ID to set as active for this account.",
+			placeholder: "12345678901234567890",
+		},
+
+		{
+			displayName: "Default Subreddit",
+			name: "defaultSubreddit",
+			type: "string",
+			default: "",
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ["connect"],
+					operation: ["updateRedditSubreddits"],
+				},
+			},
+			description:
+				"Default subreddit name (without the \"r/\" prefix) to use when publishing posts.",
+			placeholder: "marketing",
+		},
+
+		{
+			displayName: "Subreddit",
+			name: "subreddit",
+			type: "string",
+			default: "",
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ["connect"],
+					operation: ["getRedditFlairs"],
+				},
+			},
+			description: "Subreddit name (without the \"r/\" prefix) to fetch flairs for.",
+			placeholder: "marketing",
 		},
 	],
 };

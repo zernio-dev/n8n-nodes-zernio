@@ -4,6 +4,27 @@ import { SUPPORTED_PLATFORMS } from "../utils/platformHelpers";
 export const logsResource: LateResourceModule = {
 	operations: [
 		{
+			name: "List Logs",
+			value: "listLogs",
+			action: "List activity logs",
+			routing: {
+				request: {
+					method: "GET",
+					url: "/logs",
+					qs: {
+						type: "={{ $parameter.type || 'publishing' }}",
+						status: "={{ $parameter.status || undefined }}",
+						platform: "={{ $parameter.platform || undefined }}",
+						action: "={{ $parameter.action || undefined }}",
+						search: "={{ $parameter.search || undefined }}",
+						days: "={{ $parameter.days || 90 }}",
+						limit: "={{ $parameter.limit || 50 }}",
+						skip: "={{ $parameter.skip || 0 }}",
+					},
+				},
+			},
+		},
+		{
 			name: "List Posts Logs",
 			value: "listPostsLogs",
 			action: "List publishing logs",
@@ -59,6 +80,27 @@ export const logsResource: LateResourceModule = {
 	],
 
 	fields: [
+		// Type filter (unified logs)
+		{
+			displayName: "Type",
+			name: "type",
+			type: "options",
+			options: [
+				{ name: "Publishing", value: "publishing" },
+				{ name: "Connections", value: "connections" },
+				{ name: "Webhooks", value: "webhooks" },
+				{ name: "Messaging", value: "messaging" },
+			],
+			default: "publishing",
+			displayOptions: {
+				show: {
+					resource: ["logs"],
+					operation: ["listLogs"],
+				},
+			},
+			description: "Log category to query",
+		},
+
 		// Post ID for getPostLogs
 		{
 			displayName: "Post ID",
@@ -76,7 +118,7 @@ export const logsResource: LateResourceModule = {
 			required: true,
 		},
 
-		// Status filter (posts logs)
+		// Status filter (posts logs + unified logs)
 		{
 			displayName: "Status",
 			name: "status",
@@ -92,13 +134,13 @@ export const logsResource: LateResourceModule = {
 			displayOptions: {
 				show: {
 					resource: ["logs"],
-					operation: ["listPostsLogs"],
+					operation: ["listPostsLogs", "listLogs"],
 				},
 			},
 			description: "Filter by log status",
 		},
 
-		// Platform filter (posts logs + connection logs)
+		// Platform filter (posts logs + connection logs + unified logs)
 		{
 			displayName: "Platform",
 			name: "platform",
@@ -114,13 +156,13 @@ export const logsResource: LateResourceModule = {
 			displayOptions: {
 				show: {
 					resource: ["logs"],
-					operation: ["listPostsLogs", "listConnectionLogs"],
+					operation: ["listPostsLogs", "listConnectionLogs", "listLogs"],
 				},
 			},
 			description: "Filter by platform",
 		},
 
-		// Action filter (posts logs)
+		// Action filter (posts logs + unified logs)
 		{
 			displayName: "Action",
 			name: "action",
@@ -143,6 +185,21 @@ export const logsResource: LateResourceModule = {
 			},
 			description: "Filter by action type",
 		},
+		{
+			displayName: "Action",
+			name: "action",
+			type: "string",
+			default: "",
+			displayOptions: {
+				show: {
+					resource: ["logs"],
+					operation: ["listLogs"],
+				},
+			},
+			description:
+				"Filter by action (e.g., post.published, message.sent, account.connected, webhook.delivered)",
+			placeholder: "post.published",
+		},
 
 		// Days filter (posts logs + connection logs)
 		{
@@ -159,7 +216,22 @@ export const logsResource: LateResourceModule = {
 			description: "Number of days to look back (max 7)",
 		},
 
-		// Search filter (posts logs)
+		// Days filter (unified logs)
+		{
+			displayName: "Days",
+			name: "days",
+			type: "number",
+			default: 90,
+			displayOptions: {
+				show: {
+					resource: ["logs"],
+					operation: ["listLogs"],
+				},
+			},
+			description: "Number of days to look back (max 90). Logs are retained for 90 days.",
+		},
+
+		// Search filter (posts logs + unified logs)
 		{
 			displayName: "Search",
 			name: "search",
@@ -168,10 +240,10 @@ export const logsResource: LateResourceModule = {
 			displayOptions: {
 				show: {
 					resource: ["logs"],
-					operation: ["listPostsLogs"],
+					operation: ["listPostsLogs", "listLogs"],
 				},
 			},
-			description: "Search through log entries by text content",
+			description: "Free-text search across log fields",
 			placeholder: "rate limit",
 		},
 
@@ -198,6 +270,34 @@ export const logsResource: LateResourceModule = {
 				show: {
 					resource: ["logs"],
 					operation: ["listPostsLogs", "listConnectionLogs", "getPostLogs"],
+				},
+			},
+			description: "Maximum number of logs to return (max 100)",
+		},
+
+		// Pagination (unified logs)
+		{
+			displayName: "Skip",
+			name: "skip",
+			type: "number",
+			default: 0,
+			displayOptions: {
+				show: {
+					resource: ["logs"],
+					operation: ["listLogs"],
+				},
+			},
+			description: "Number of logs to skip (for pagination)",
+		},
+		{
+			displayName: "Limit",
+			name: "limit",
+			type: "number",
+			default: 50,
+			displayOptions: {
+				show: {
+					resource: ["logs"],
+					operation: ["listLogs"],
 				},
 			},
 			description: "Maximum number of logs to return (max 100)",
