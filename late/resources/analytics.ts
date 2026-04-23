@@ -46,6 +46,23 @@ export const analyticsResource: LateResourceModule = {
 			},
 		},
 		{
+			name: "YouTube Demographics",
+			value: "youtubeDemographics",
+			action: "Get YouTube demographics",
+			routing: {
+				request: {
+					method: "GET",
+					url: "/analytics/youtube/demographics",
+					qs: {
+						accountId: "={{ $parameter.accountId }}",
+						breakdown: "={{ $parameter.ytBreakdown || undefined }}",
+						startDate: "={{ $parameter.ytStartDate || undefined }}",
+						endDate: "={{ $parameter.ytEndDate || undefined }}",
+					},
+				},
+			},
+		},
+		{
 			name: "Instagram Account Insights",
 			value: "instagramAccountInsights",
 			action: "Get Instagram account-level insights",
@@ -165,6 +182,39 @@ export const analyticsResource: LateResourceModule = {
 			},
 		},
 		{
+			name: "Google Business Performance",
+			value: "googleBusinessPerformance",
+			action: "Get Google Business Profile performance metrics",
+			routing: {
+				request: {
+					method: "GET",
+					url: "/analytics/googlebusiness/performance",
+					qs: {
+						accountId: "={{ $parameter.gbpAccountId }}",
+						metrics: "={{ $parameter.gbpMetrics || undefined }}",
+						startDate: "={{ $parameter.gbpStartDate || undefined }}",
+						endDate: "={{ $parameter.gbpEndDate || undefined }}",
+					},
+				},
+			},
+		},
+		{
+			name: "Google Business Search Keywords",
+			value: "googleBusinessSearchKeywords",
+			action: "Get Google Business Profile search keywords",
+			routing: {
+				request: {
+					method: "GET",
+					url: "/analytics/googlebusiness/search-keywords",
+					qs: {
+						accountId: "={{ $parameter.gbpAccountId }}",
+						startMonth: "={{ $parameter.startMonth || undefined }}",
+						endMonth: "={{ $parameter.endMonth || undefined }}",
+					},
+				},
+			},
+		},
+		{
 			name: "Follower Stats",
 			value: "followerStats",
 			action: "Get follower stats",
@@ -265,20 +315,18 @@ export const analyticsResource: LateResourceModule = {
 			displayOptions: {
 				show: {
 					resource: ["analytics"],
-					operation: [
-						"get",
-						"dailyMetrics",
-						"bestTime",
-						"contentDecay",
-						"postingFrequency",
-					],
+					operation: ["get", "dailyMetrics", "bestTime", "contentDecay", "postingFrequency"],
 				},
 			},
 			description: "Filter by platform. Leave empty for all platforms.",
 		},
 
 		// Profile ID filter (shared)
-		buildProfileIdField("analytics", ["get", "dailyMetrics", "bestTime", "contentDecay", "postingFrequency", "followerStats"], false),
+		buildProfileIdField(
+			"analytics",
+			["get", "dailyMetrics", "bestTime", "contentDecay", "postingFrequency", "followerStats"],
+			false
+		),
 
 		// Account ID filter (shared)
 		{
@@ -287,6 +335,7 @@ export const analyticsResource: LateResourceModule = {
 				[
 					"get",
 					"youtubeDailyViews",
+					"youtubeDemographics",
 					"instagramAccountInsights",
 					"instagramDemographics",
 					"dailyMetrics",
@@ -468,6 +517,51 @@ export const analyticsResource: LateResourceModule = {
 			},
 		},
 
+		// --- YouTube Demographics ---
+		{
+			displayName: "Breakdown",
+			name: "ytBreakdown",
+			type: "string",
+			default: "",
+			placeholder: "age,gender,country",
+			description:
+				"Comma-separated list of demographic dimensions: age, gender, country. Leave empty for all three.",
+			displayOptions: {
+				show: {
+					resource: ["analytics"],
+					operation: ["youtubeDemographics"],
+				},
+			},
+		},
+		{
+			displayName: "Start Date",
+			name: "ytStartDate",
+			type: "string",
+			default: "",
+			placeholder: "2024-01-01",
+			description: "Start date (YYYY-MM-DD). Defaults to 90 days ago.",
+			displayOptions: {
+				show: {
+					resource: ["analytics"],
+					operation: ["youtubeDemographics"],
+				},
+			},
+		},
+		{
+			displayName: "End Date",
+			name: "ytEndDate",
+			type: "string",
+			default: "",
+			placeholder: "2024-01-31",
+			description: "End date (YYYY-MM-DD). Defaults to 3 days ago (YouTube data latency).",
+			displayOptions: {
+				show: {
+					resource: ["analytics"],
+					operation: ["youtubeDemographics"],
+				},
+			},
+		},
+
 		// --- Instagram Account Insights ---
 		{
 			displayName: "Metrics",
@@ -643,6 +737,93 @@ export const analyticsResource: LateResourceModule = {
 			},
 		},
 
+		// --- Google Business Profile ---
+		{
+			displayName: "Account ID",
+			name: "gbpAccountId",
+			type: "string",
+			default: "",
+			required: true,
+			description: "The Zernio SocialAccount ID for the Google Business Profile account.",
+			displayOptions: {
+				show: {
+					resource: ["analytics"],
+					operation: ["googleBusinessPerformance", "googleBusinessSearchKeywords"],
+				},
+			},
+		},
+		{
+			displayName: "Metrics",
+			name: "gbpMetrics",
+			type: "string",
+			default: "",
+			placeholder: "WEBSITE_CLICKS,CALL_CLICKS,BUSINESS_DIRECTION_REQUESTS",
+			description:
+				"Comma-separated metric names. Leave empty for all available metrics (e.g. BUSINESS_IMPRESSIONS_*, WEBSITE_CLICKS, CALL_CLICKS, BUSINESS_CONVERSATIONS, BUSINESS_BOOKINGS).",
+			displayOptions: {
+				show: {
+					resource: ["analytics"],
+					operation: ["googleBusinessPerformance"],
+				},
+			},
+		},
+		{
+			displayName: "Start Date",
+			name: "gbpStartDate",
+			type: "string",
+			default: "",
+			placeholder: "2024-01-01",
+			description: "Start date (YYYY-MM-DD). Defaults to 30 days ago. Max 18 months back.",
+			displayOptions: {
+				show: {
+					resource: ["analytics"],
+					operation: ["googleBusinessPerformance"],
+				},
+			},
+		},
+		{
+			displayName: "End Date",
+			name: "gbpEndDate",
+			type: "string",
+			default: "",
+			placeholder: "2024-01-31",
+			description: "End date (YYYY-MM-DD). Defaults to today.",
+			displayOptions: {
+				show: {
+					resource: ["analytics"],
+					operation: ["googleBusinessPerformance"],
+				},
+			},
+		},
+		{
+			displayName: "Start Month",
+			name: "startMonth",
+			type: "string",
+			default: "",
+			placeholder: "2024-01",
+			description: "Start month (YYYY-MM). Defaults to 3 months ago.",
+			displayOptions: {
+				show: {
+					resource: ["analytics"],
+					operation: ["googleBusinessSearchKeywords"],
+				},
+			},
+		},
+		{
+			displayName: "End Month",
+			name: "endMonth",
+			type: "string",
+			default: "",
+			placeholder: "2024-03",
+			description: "End month (YYYY-MM). Defaults to current month.",
+			displayOptions: {
+				show: {
+					resource: ["analytics"],
+					operation: ["googleBusinessSearchKeywords"],
+				},
+			},
+		},
+
 		// --- Follower Stats ---
 		{
 			displayName: "Account IDs",
@@ -717,11 +898,7 @@ export const analyticsResource: LateResourceModule = {
 			displayOptions: {
 				show: {
 					resource: ["analytics"],
-					operation: [
-						"linkedinAggregateAnalytics",
-						"linkedinPostAnalytics",
-						"linkedinPostReactions",
-					],
+					operation: ["linkedinAggregateAnalytics", "linkedinPostAnalytics", "linkedinPostReactions"],
 				},
 			},
 		},

@@ -36,7 +36,7 @@ export const redditResource: LateResourceModule = {
       routing: {
         request: {
           method: "GET",
-          url: "/reddit/search",
+          url: "/v1/reddit/search",
           qs: {
             accountId: "={{ $parameter.accountId }}",
             subreddit: "={{ $parameter.subreddit || undefined }}",
@@ -51,12 +51,12 @@ export const redditResource: LateResourceModule = {
     },
     {
       name: "Get Feed",
-      value: "feed",
+      value: "getRedditFeed",
       action: "Get subreddit feed",
       routing: {
         request: {
           method: "GET",
-          url: "/reddit/feed",
+          url: "/v1/reddit/feed",
           qs: {
             accountId: "={{ $parameter.accountId }}",
             subreddit: "={{ $parameter.subreddit || undefined }}",
@@ -74,7 +74,7 @@ export const redditResource: LateResourceModule = {
     // Account ID for subreddit operations
     buildAccountIdField(
       "reddit",
-      ["listSubreddits", "updateSubreddits", "feed", "searchReddit"],
+      ["listSubreddits", "updateSubreddits", "getRedditFeed", "searchReddit"],
       "Account ID",
       "The Reddit account ID"
     ),
@@ -121,7 +121,7 @@ export const redditResource: LateResourceModule = {
       displayOptions: {
         show: {
           resource: ["reddit"],
-          operation: ["searchReddit", "feed"],
+          operation: ["searchReddit", "getRedditFeed"],
         },
       },
       description:
@@ -174,7 +174,7 @@ export const redditResource: LateResourceModule = {
       displayOptions: {
         show: {
           resource: ["reddit"],
-          operation: ["searchReddit", "feed"],
+          operation: ["searchReddit", "getRedditFeed"],
         },
       },
       description: "Number of posts to fetch (max 100)",
@@ -187,7 +187,7 @@ export const redditResource: LateResourceModule = {
       displayOptions: {
         show: {
           resource: ["reddit"],
-          operation: ["searchReddit", "feed"],
+          operation: ["searchReddit", "getRedditFeed"],
         },
       },
       description: "Pagination cursor for fetching next page of results",
@@ -209,7 +209,7 @@ export const redditResource: LateResourceModule = {
       displayOptions: {
         show: {
           resource: ["reddit"],
-          operation: ["feed"],
+          operation: ["getRedditFeed"],
         },
       },
       description: "Sort order for feed items",
@@ -230,7 +230,7 @@ export const redditResource: LateResourceModule = {
       displayOptions: {
         show: {
           resource: ["reddit"],
-          operation: ["feed"],
+          operation: ["getRedditFeed"],
           sort: ["top"],
         },
       },

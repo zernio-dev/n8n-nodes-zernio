@@ -18,7 +18,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "GET",
-          url: "/posts",
+          url: "/v1/posts",
           qs: {
             page: "={{ $parameter.page || 1 }}",
             limit: "={{ $parameter.limit || 10 }}",
@@ -42,7 +42,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "GET",
-          url: "=/posts/{{ $parameter.postId }}",
+          url: "=/v1/posts/{{ $parameter.postId }}",
         },
       },
     },
@@ -53,7 +53,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "POST",
-          url: "/posts",
+          url: "/v1/posts",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
         },
@@ -72,7 +72,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "PUT",
-          url: "=/posts/{{ $parameter.postId }}",
+          url: "=/v1/posts/{{ $parameter.postId }}",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
         },
@@ -91,7 +91,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "DELETE",
-          url: "=/posts/{{ $parameter.postId }}",
+          url: "=/v1/posts/{{ $parameter.postId }}",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
         },
@@ -107,7 +107,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "POST",
-          url: "=/posts/{{ $parameter.postId }}/retry",
+          url: "=/v1/posts/{{ $parameter.postId }}/retry",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
         },
@@ -123,11 +123,61 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "POST",
-          url: "=/posts/{{ $parameter.postId }}/unpublish",
+          url: "=/v1/posts/{{ $parameter.postId }}/unpublish",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
           body: {
             platform: "={{ $parameter.unpublishPlatform }}",
+          },
+        },
+        output: {
+          postReceive: [handleApiErrorResponse],
+        },
+      },
+    },
+    {
+      name: "Edit",
+      value: "edit",
+      action: "Edit published post",
+      routing: {
+        request: {
+          method: "POST",
+          url: "=/v1/posts/{{ $parameter.postId }}/edit",
+          ignoreHttpStatusErrors: true,
+          returnFullResponse: true,
+          body: {
+            platform: "={{ $parameter.editPlatform }}",
+            content: "={{ $parameter.editContent }}",
+          },
+        },
+        output: {
+          postReceive: [handleApiErrorResponse],
+        },
+      },
+    },
+    {
+      name: "Update Metadata",
+      value: "updateMetadata",
+      action: "Update post metadata",
+      routing: {
+        request: {
+          method: "POST",
+          url: "=/v1/posts/{{ $parameter.postId }}/update-metadata",
+          ignoreHttpStatusErrors: true,
+          returnFullResponse: true,
+          body: {
+            platform: "={{ $parameter.metadataPlatform }}",
+            videoId: "={{ $parameter.videoId || undefined }}",
+            accountId: "={{ $parameter.accountId || undefined }}",
+            title: "={{ $parameter.videoTitle || undefined }}",
+            description: "={{ $parameter.videoDescription || undefined }}",
+            tags: "={{ $parameter.videoTags || undefined }}",
+            categoryId: "={{ $parameter.categoryId || undefined }}",
+            privacyStatus: "={{ $parameter.privacyStatus || undefined }}",
+            thumbnailUrl: "={{ $parameter.thumbnailUrl || undefined }}",
+            madeForKids: "={{ $parameter.madeForKids ?? undefined }}",
+            containsSyntheticMedia: "={{ $parameter.containsSyntheticMedia ?? undefined }}",
+            playlistId: "={{ $parameter.playlistId || undefined }}",
           },
         },
         output: {
@@ -142,7 +192,7 @@ export const postsResource: LateResourceModule = {
       routing: {
         request: {
           method: "POST",
-          url: "/posts/bulk-upload",
+          url: "/v1/posts/bulk-upload",
           ignoreHttpStatusErrors: true,
           returnFullResponse: true,
           headers: {
@@ -381,7 +431,8 @@ export const postsResource: LateResourceModule = {
           selectedPlatforms: ["bluesky"],
         },
       },
-      description: "Create Bluesky threads with multiple posts. Each post supports up to 300 characters. Only the first post can include media.",
+      description:
+        "Create Bluesky threads with multiple posts. Each post supports up to 300 characters. Only the first post can include media.",
       options: [
         {
           name: "items",
@@ -544,6 +595,224 @@ export const postsResource: LateResourceModule = {
         "The platform to delete the published post from. Not supported on Instagram, TikTok, or Snapchat. Threaded posts delete all items; YouTube deletion is permanent.",
     },
 
+    // Edit fields
+    {
+      displayName: "Platform",
+      name: "editPlatform",
+      type: "options",
+      options: [{ name: "Twitter/X", value: "twitter" }],
+      default: "twitter",
+      required: true,
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["edit"],
+        },
+      },
+      description: "The platform to edit the post on. Currently only Twitter/X is supported.",
+    },
+    {
+      displayName: "Content",
+      name: "editContent",
+      type: "string",
+      typeOptions: {
+        rows: 3,
+      },
+      default: "",
+      required: true,
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["edit"],
+        },
+      },
+      description: "The new text content. Media edits are not supported.",
+      placeholder: "Updated tweet text with corrected information",
+    },
+
+    // Update metadata fields (YouTube)
+    {
+      displayName: "Platform",
+      name: "metadataPlatform",
+      type: "options",
+      options: [{ name: "YouTube", value: "youtube" }],
+      default: "youtube",
+      required: true,
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["updateMetadata"],
+        },
+      },
+      description: "The platform to update metadata on. Currently only YouTube is supported.",
+    },
+    {
+      displayName: "Video ID",
+      name: "videoId",
+      type: "string",
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["updateMetadata"],
+        },
+      },
+      description:
+        'YouTube video ID (required for direct mode). For direct mode, set Post ID to "_" and provide Video ID + Account ID.',
+      placeholder: "dQw4w9WgXcQ",
+    },
+    {
+      displayName: "Account ID",
+      name: "accountId",
+      type: "string",
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["updateMetadata"],
+        },
+      },
+      description:
+        'Zernio social account ID for the connected YouTube channel (required for direct mode). For direct mode, set Post ID to "_" and provide Video ID + Account ID.',
+      placeholder: "68fb37418bbca9c10cbfef26",
+    },
+    {
+      displayName: "Title",
+      name: "videoTitle",
+      type: "string",
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["updateMetadata"],
+        },
+      },
+      description: "New video title (YouTube max 100 characters).",
+      placeholder: "Updated Video Title",
+    },
+    {
+      displayName: "Description",
+      name: "videoDescription",
+      type: "string",
+      typeOptions: {
+        rows: 4,
+      },
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["updateMetadata"],
+        },
+      },
+      description: "New video description.",
+      placeholder: "New SEO-optimized description",
+    },
+    {
+      displayName: "Tags",
+      name: "videoTags",
+      type: "string",
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["updateMetadata"],
+        },
+      },
+      description:
+        "Comma-separated list of keyword tags. YouTube constraints: each tag max 100 chars, combined max 500 chars.",
+      placeholder: "seo, marketing, tutorial",
+    },
+    {
+      displayName: "Category ID",
+      name: "categoryId",
+      type: "string",
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["updateMetadata"],
+        },
+      },
+      description: "YouTube video category ID.",
+      placeholder: "27",
+    },
+    {
+      displayName: "Privacy Status",
+      name: "privacyStatus",
+      type: "options",
+      options: [
+        { name: "Public", value: "public" },
+        { name: "Private", value: "private" },
+        { name: "Unlisted", value: "unlisted" },
+      ],
+      default: "public",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["updateMetadata"],
+        },
+      },
+      description: "Video privacy setting.",
+    },
+    {
+      displayName: "Thumbnail URL",
+      name: "thumbnailUrl",
+      type: "string",
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["updateMetadata"],
+        },
+      },
+      description:
+        "Public URL of a custom thumbnail image (JPEG/PNG/GIF, max 2 MB, recommended 1280x720). Channel must be verified to set custom thumbnails.",
+      placeholder: "https://example.com/my-thumbnail.jpg",
+    },
+    {
+      displayName: "Made for Kids",
+      name: "madeForKids",
+      type: "boolean",
+      default: false,
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["updateMetadata"],
+        },
+      },
+      description:
+        "COPPA compliance flag. Set true for child-directed content (restricts comments, notifications, ad targeting).",
+    },
+    {
+      displayName: "Contains Synthetic Media",
+      name: "containsSyntheticMedia",
+      type: "boolean",
+      default: false,
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["updateMetadata"],
+        },
+      },
+      description:
+        "AI-generated content disclosure. Set true if the video contains synthetic content that could be mistaken for real.",
+    },
+    {
+      displayName: "Playlist ID",
+      name: "playlistId",
+      type: "string",
+      default: "",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["updateMetadata"],
+        },
+      },
+      description:
+        "YouTube playlist ID to add the video to (e.g. 'PLxxxxxxxxxxxxx'). Only playlists owned by the channel are supported.",
+      placeholder: "PLxxxxxxxxxxxxx",
+    },
+
     // Bulk upload fields
     {
       displayName: "CSV File",
@@ -682,6 +951,24 @@ export const postsResource: LateResourceModule = {
         },
       },
       description: "Sort order for results",
+    },
+
+    // Common identifier fields for operations that require a postId
+    {
+      displayName: "Post ID",
+      name: "postId",
+      type: "string",
+      default: "",
+      required: true,
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["get", "update", "delete", "retry", "unpublish", "logs", "edit", "updateMetadata"],
+        },
+      },
+      description:
+        'The unique identifier of the post. For Update Metadata direct mode, set this to "_" and provide Video ID + Account ID.',
+      placeholder: "64e1f0a9e2b5af0012ab34cd",
     },
   ],
 };
