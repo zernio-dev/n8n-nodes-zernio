@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0] - 2026-05-12
+
+### Changes
+- feat(tiktok): expose PHOTO carousel media type with auto_add_music for background music
+- feat(tiktok): expose commercial content disclosure (brand organic / branded content)
+- feat(tiktok): expose AI-generated content (AIGC) flag for videos
+- feat(tiktok): expose video cover timestamp (ms) field
+
 ## [0.5.4] - 2026-04-08
 
 ### Changes

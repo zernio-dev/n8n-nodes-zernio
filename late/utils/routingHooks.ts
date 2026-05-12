@@ -108,7 +108,10 @@ function buildTagsArray(
 }
 
 /**
- * Builds TikTok settings if TikTok is selected
+ * Builds TikTok settings if TikTok is selected.
+ * Returns snake_case keys (the Zernio API normalizer maps them as-is).
+ * Optional fields are emitted only when the user set them, so the API's
+ * DEFAULT_TIKTOK_SETTINGS apply on the server side when omitted.
  */
 function buildTikTokSettings(executeFunctions: any, itemIndex: number): any {
   const selectedPlatforms = executeFunctions.getNodeParameter(
@@ -118,28 +121,56 @@ function buildTikTokSettings(executeFunctions: any, itemIndex: number): any {
   ) as string[];
   if (!selectedPlatforms.includes("tiktok")) return undefined;
 
-  return {
-    privacyLevel: executeFunctions.getNodeParameter(
-      "tiktokPrivacyLevel",
-      itemIndex,
-      "PUBLIC_TO_EVERYONE"
-    ),
-    allowComments: executeFunctions.getNodeParameter(
-      "tiktokAllowComments",
-      itemIndex,
-      true
-    ),
-    allowDuet: executeFunctions.getNodeParameter(
-      "tiktokAllowDuet",
-      itemIndex,
-      true
-    ),
-    allowStitch: executeFunctions.getNodeParameter(
-      "tiktokAllowStitch",
-      itemIndex,
-      true
-    ),
+  // Forward optional TikTok fields only when the user actually set them.
+  // The API normalizer applies DEFAULT_TIKTOK_SETTINGS server-side, so omitting
+  // a key here lets the platform default win (auto_add_music=false, etc.).
+  // Sending an explicit value would override that default unnecessarily.
+  const settings: Record<string, any> = {
+    privacy_level: executeFunctions.getNodeParameter("tiktokPrivacyLevel", itemIndex, "PUBLIC_TO_EVERYONE"),
+    allow_comment: executeFunctions.getNodeParameter("tiktokAllowComments", itemIndex, true),
+    allow_duet: executeFunctions.getNodeParameter("tiktokAllowDuet", itemIndex, true),
+    allow_stitch: executeFunctions.getNodeParameter("tiktokAllowStitch", itemIndex, true),
   };
+
+  const mediaType = executeFunctions.getNodeParameter("tiktokMediaType", itemIndex, "VIDEO") as string;
+
+  // Emit media_type only when user opted into PHOTO. Keeps existing
+  // VIDEO-only workflows byte-identical to pre-feature behavior.
+  if (mediaType === "PHOTO") {
+    settings.media_type = "PHOTO";
+
+    const description = executeFunctions.getNodeParameter("tiktokDescription", itemIndex, "") as string;
+    if (description) settings.description = description;
+
+    settings.auto_add_music = executeFunctions.getNodeParameter("tiktokAutoAddMusic", itemIndex, false);
+  } else {
+    // VIDEO branch: AIGC + cover timestamp are video-only per TikTok API.
+    const aigc = executeFunctions.getNodeParameter("tiktokVideoMadeWithAi", itemIndex, false);
+    if (aigc) settings.video_made_with_ai = true;
+
+    const coverMs = executeFunctions.getNodeParameter("tiktokVideoCoverTimestampMs", itemIndex, 1000);
+    // Default 1000ms matches libs/platforms/tiktok.ts fallback; omit when default
+    // so payload stays identical to pre-feature behavior.
+    if (typeof coverMs === "number" && coverMs !== 1000) {
+      settings.video_cover_timestamp_ms = coverMs;
+    }
+  }
+
+  // 'none' is the n8n UI default and means "no disclosure". The API treats absence
+  // as 'none' too, so we omit the key entirely to avoid sending redundant data
+  // and to keep the request payload aligned with the legacy (4-field) behavior.
+  const commercialType = executeFunctions.getNodeParameter("tiktokCommercialContentType", itemIndex, "none") as string;
+  if (commercialType !== "none") {
+    settings.commercial_content_type = commercialType;
+    if (commercialType === "brand_content") {
+      settings.brand_partner_promote = executeFunctions.getNodeParameter("tiktokBrandPartnerPromote", itemIndex, false);
+    }
+    if (commercialType === "brand_organic") {
+      settings.is_brand_organic_post = executeFunctions.getNodeParameter("tiktokIsBrandOrganic", itemIndex, false);
+    }
+  }
+
+  return settings;
 }
 
 /**

@@ -515,6 +515,144 @@ export const postsResource: LateResourceModule = {
       description: "Allow other users to stitch this video",
     },
 
+    // TikTok PHOTO carousel + advanced disclosure fields.
+    // The API (tiktok-settings-normalizer.ts) accepts these as-is in tiktokSettings.
+    // media_type gates which downstream post_info fields TikTok consumes:
+    //   PHOTO -> auto_add_music, description, brand_*_toggle
+    //   VIDEO -> video_cover_timestamp_ms, video_made_with_ai (is_aigc)
+    // See libs/platforms/tiktok.ts:1122-1166 for the per-media-type field consumption.
+    {
+      displayName: "TikTok Media Type",
+      name: "tiktokMediaType",
+      type: "options",
+      options: [
+        { name: "Video", value: "VIDEO" },
+        { name: "Photo Carousel", value: "PHOTO" },
+      ],
+      default: "VIDEO",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["create", "update"],
+          selectedPlatforms: ["tiktok"],
+        },
+      },
+      description: "TikTok media type. PHOTO enables photo carousel posts with optional background music.",
+    },
+    {
+      displayName: "TikTok Photo Description",
+      name: "tiktokDescription",
+      type: "string",
+      default: "",
+      typeOptions: { rows: 3 },
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["create", "update"],
+          selectedPlatforms: ["tiktok"],
+          tiktokMediaType: ["PHOTO"],
+        },
+      },
+      description: "Caption for the TikTok photo carousel. If empty, the post content is used.",
+    },
+    // auto_add_music is REQUIRED for TikTok photo carousels to play background music.
+    // TikTok's API defaults it to false; we must explicitly opt in.
+    {
+      displayName: "TikTok Auto Add Music",
+      name: "tiktokAutoAddMusic",
+      type: "boolean",
+      default: false,
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["create", "update"],
+          selectedPlatforms: ["tiktok"],
+          tiktokMediaType: ["PHOTO"],
+        },
+      },
+      description: "Auto-add TikTok recommended background music to the photo carousel",
+    },
+    {
+      displayName: "TikTok Commercial Content Type",
+      name: "tiktokCommercialContentType",
+      type: "options",
+      options: [
+        { name: "None", value: "none" },
+        { name: "Your Brand (Organic)", value: "brand_organic" },
+        { name: "Branded Content (Partnership)", value: "brand_content" },
+      ],
+      default: "none",
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["create", "update"],
+          selectedPlatforms: ["tiktok"],
+        },
+      },
+      description: "Commercial content disclosure required by TikTok when promoting a brand",
+    },
+    {
+      displayName: "TikTok Brand Partner Promote",
+      name: "tiktokBrandPartnerPromote",
+      type: "boolean",
+      default: false,
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["create", "update"],
+          selectedPlatforms: ["tiktok"],
+          tiktokCommercialContentType: ["brand_content"],
+        },
+      },
+      description: "Toggle Branded Content disclosure (paid partnership)",
+    },
+    {
+      displayName: "TikTok Is Brand Organic",
+      name: "tiktokIsBrandOrganic",
+      type: "boolean",
+      default: false,
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["create", "update"],
+          selectedPlatforms: ["tiktok"],
+          tiktokCommercialContentType: ["brand_organic"],
+        },
+      },
+      description: "Toggle Your Brand disclosure (promoting your own brand)",
+    },
+    {
+      displayName: "TikTok Video Made With AI",
+      name: "tiktokVideoMadeWithAi",
+      type: "boolean",
+      default: false,
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["create", "update"],
+          selectedPlatforms: ["tiktok"],
+          tiktokMediaType: ["VIDEO"],
+        },
+      },
+      description: "Declare the video as AI-generated content (TikTok AIGC label)",
+    },
+    {
+      displayName: "TikTok Video Cover Timestamp (ms)",
+      name: "tiktokVideoCoverTimestampMs",
+      type: "number",
+      default: 1000,
+      typeOptions: { minValue: 0 },
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["create", "update"],
+          selectedPlatforms: ["tiktok"],
+          tiktokMediaType: ["VIDEO"],
+        },
+      },
+      description: "Timestamp (ms) of the video frame to use as the cover image",
+    },
+
     // Unpublish fields
     {
       displayName: "Platform",
