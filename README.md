@@ -276,8 +276,10 @@ Post to Instagram Stories:
 }
 ```
 
-#### TikTok Privacy Settings
-Control TikTok post privacy:
+#### TikTok Privacy, Photo Carousel and Disclosure Settings
+
+Control TikTok privacy plus optional PHOTO carousel media type (with background
+music), commercial content disclosure, and AIGC labeling:
 
 ```json
 {
@@ -290,13 +292,22 @@ Control TikTok post privacy:
           "privacy_level": "PUBLIC_TO_EVERYONE",
           "allow_comment": true,
           "allow_duet": true,
-          "allow_stitch": true
+          "allow_stitch": true,
+          "media_type": "PHOTO",
+          "auto_add_music": true,
+          "commercial_content_type": "brand_organic",
+          "is_brand_organic_post": true,
+          "video_made_with_ai": false
         }
       }
     }
   ]
 }
 ```
+
+PHOTO carousel posts require `media_type: "PHOTO"` and support `auto_add_music`
+to attach TikTok-recommended background music. Brand and AIGC disclosures are
+optional but required by TikTok policy when applicable.
 
 #### YouTube Settings
 Add custom thumbnails and first comments:
