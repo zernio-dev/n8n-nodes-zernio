@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.0] - 2026-05-12
+
+### Changes
+- feat(tiktok): expose PHOTO carousel, auto_add_music, AIGC and commercial content settings (#26)
+
+
 ## [0.6.0] - 2026-05-12
 
 ### Changes
