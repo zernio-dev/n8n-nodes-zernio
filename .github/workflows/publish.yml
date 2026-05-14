@@ -15,6 +15,7 @@ permissions:
   pull-requests: write
   packages: write
   issues: write
+  id-token: write
 
 jobs:
   publish:
@@ -119,7 +120,7 @@ jobs:
         continue-on-error: true
         run: |
           echo "Publishing n8n-nodes-zernio to NPM..."
-          npm publish --access public
+          npm publish --access public --provenance
 
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
           echo "✅ Successfully published n8n-nodes-zernio@$PACKAGE_VERSION to NPM"
@@ -133,7 +134,7 @@ jobs:
           # Swap package name for backwards-compatible dual publish
           node -e "const p=require('./package.json'); p.name='n8n-nodes-late'; require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2)+'\n')"
           echo "Publishing n8n-nodes-late@$PACKAGE_VERSION to NPM..."
-          npm publish --access public
+          npm publish --access public --provenance
           echo "✅ Successfully published n8n-nodes-late@$PACKAGE_VERSION to NPM"
           # Restore original package name
           node -e "const p=require('./package.json'); p.name='n8n-nodes-zernio'; require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2)+'\n')"
