@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.1] - 2026-05-14
+
+### Changes
+- Merge pull request #27 from zernio-dev/ci/npm-provenance
+
+
 ## [0.7.0] - 2026-05-12
 
 ### Changes
