@@ -176,6 +176,32 @@ function buildTikTokSettings(executeFunctions: any, itemIndex: number): any {
 /**
  * Pre-send hook for posts create operation
  */
+/**
+ * Attach thread/conversation items to the matching platform targets as
+ * platformSpecificData.threadItems, which is what the Late API actually reads.
+ * The thread items were previously sent as top-level twitterThread /
+ * threadsConversation / blueskyThread fields, which the API silently ignores, so
+ * threads never published (#28). Each n8n thread item carries { content, mediaItems
+ * (a nested fixedCollection) }, so unwrap mediaItems.items into a plain array.
+ */
+function attachThreadItems(
+  platforms: Array<{ platform: string; accountId: string; platformSpecificData?: any }>,
+  threadsByPlatform: Record<string, any[]>
+): void {
+  for (const entry of platforms) {
+    const rawItems = threadsByPlatform[entry.platform];
+    if (!rawItems || rawItems.length === 0) continue;
+    const threadItems = rawItems.map((it: any) => ({
+      content: it.content ?? "",
+      mediaItems: it.mediaItems?.items ?? [],
+    }));
+    entry.platformSpecificData = {
+      ...(entry.platformSpecificData ?? {}),
+      threadItems,
+    };
+  }
+}
+
 export async function postsCreatePreSend(
   this: any,
   requestOptions: any
@@ -205,6 +231,13 @@ export async function postsCreatePreSend(
     );
   }
 
+  // Threads publish via platforms[].platformSpecificData.threadItems, not top-level fields.
+  attachThreadItems(platforms, {
+    twitter: processedParams.twitterThreadItems?.items || [],
+    threads: processedParams.threadsThreadItems?.items || [],
+    bluesky: processedParams.blueskyThreadItems?.items || [],
+  });
+
   // Build the body with processed parameters
   requestOptions.body = {
     content: this.getNodeParameter("content", 0),
@@ -216,9 +249,6 @@ export async function postsCreatePreSend(
     visibility: this.getNodeParameter("visibility", 0, "public"),
     tags: buildTagsArray(this, 0),
     mediaItems: processedParams.mediaItems?.items || [],
-    twitterThread: processedParams.twitterThreadItems?.items || [],
-    threadsConversation: processedParams.threadsThreadItems?.items || [],
-    blueskyThread: processedParams.blueskyThreadItems?.items || [],
     tiktokSettings: buildTikTokSettings(this, 0),
   };
 
@@ -243,9 +273,16 @@ export async function postsUpdatePreSend(
     0
   );
 
+  const platforms = buildPlatformsArray(this, 0);
+  attachThreadItems(platforms, {
+    twitter: processedParams.twitterThreadItems?.items || [],
+    threads: processedParams.threadsThreadItems?.items || [],
+    bluesky: processedParams.blueskyThreadItems?.items || [],
+  });
+
   requestOptions.body = {
     content: this.getNodeParameter("content", 0),
-    platforms: buildPlatformsArray(this, 0),
+    platforms,
     scheduledFor: this.getNodeParameter("scheduledFor", 0),
     timezone: this.getNodeParameter("timezone", 0),
     publishNow: this.getNodeParameter("publishNow", 0),
@@ -253,9 +290,6 @@ export async function postsUpdatePreSend(
     visibility: this.getNodeParameter("visibility", 0),
     tags: buildTagsArray(this, 0, true), // Allow undefined for updates
     mediaItems: processedParams.mediaItems?.items || [],
-    twitterThread: processedParams.twitterThreadItems?.items || [],
-    threadsConversation: processedParams.threadsThreadItems?.items || [],
-    blueskyThread: processedParams.blueskyThreadItems?.items || [],
     tiktokSettings: buildTikTokSettings(this, 0),
   };
 

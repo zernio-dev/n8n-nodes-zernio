@@ -159,7 +159,7 @@ export function buildCommonPostFields(): INodeProperties[] {
       displayOptions: {
         show: {
           resource: ["posts"],
-          operation: ["get", "update", "delete", "retry", "logs"],
+          operation: ["get", "update", "delete", "retry", "unpublish", "logs"],
         },
       },
       description:
