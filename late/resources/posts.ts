@@ -186,6 +186,26 @@ export const postsResource: LateResourceModule = {
     // Media items with proper variable handling
     buildMediaItemsField(),
 
+    // Alternative media input: a dynamic JSON array (e.g. fed from a previous node).
+    // The fixedCollection above can't accept a whole array via expression, so this
+    // field lets workflows pass `[{ url, type }]` directly. Takes precedence when set.
+    {
+      displayName: "Media Items (JSON)",
+      name: "mediaItemsJson",
+      type: "string",
+      default: "",
+      typeOptions: { rows: 2 },
+      displayOptions: {
+        show: {
+          resource: ["posts"],
+          operation: ["create", "update"],
+        },
+      },
+      description:
+        'Alternative to Media Items: a JSON array of media objects, e.g. [{"url":"https://...","type":"image"}]. Use an expression to pass a dynamic array from a previous node. Takes precedence over Media Items when set.',
+      placeholder: '={{ $json.mediaItems }}',
+    },
+
     // Twitter Thread Fields
     {
       displayName: "Twitter Thread Items",

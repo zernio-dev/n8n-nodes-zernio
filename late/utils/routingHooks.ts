@@ -202,6 +202,29 @@ function attachThreadItems(
   }
 }
 
+/**
+ * Resolve media items, preferring the "Media Items (JSON)" field when set. The
+ * fixedCollection Media Items field can't accept a whole array via expression, so
+ * this lets workflows pass a dynamic [{ url, type }] array (e.g. from a prior node).
+ */
+function resolveMediaItems(ctx: any, fixedCollectionItems: any[]): any[] {
+  const json = ctx.getNodeParameter("mediaItemsJson", 0, "");
+  if (!json) return fixedCollectionItems;
+  let parsed: any;
+  try {
+    parsed = typeof json === "string" ? JSON.parse(json) : json;
+  } catch {
+    throw new NodeOperationError(
+      ctx.getNode(),
+      'Media Items (JSON) must be a valid JSON array, e.g. [{"url":"https://...","type":"image"}]'
+    );
+  }
+  if (!Array.isArray(parsed)) {
+    throw new NodeOperationError(ctx.getNode(), "Media Items (JSON) must be a JSON array.");
+  }
+  return parsed;
+}
+
 export async function postsCreatePreSend(
   this: any,
   requestOptions: any
@@ -248,7 +271,7 @@ export async function postsCreatePreSend(
     isDraft,
     visibility: this.getNodeParameter("visibility", 0, "public"),
     tags: buildTagsArray(this, 0),
-    mediaItems: processedParams.mediaItems?.items || [],
+    mediaItems: resolveMediaItems(this, processedParams.mediaItems?.items || []),
     tiktokSettings: buildTikTokSettings(this, 0),
   };
 
@@ -289,7 +312,7 @@ export async function postsUpdatePreSend(
     isDraft: this.getNodeParameter("isDraft", 0),
     visibility: this.getNodeParameter("visibility", 0),
     tags: buildTagsArray(this, 0, true), // Allow undefined for updates
-    mediaItems: processedParams.mediaItems?.items || [],
+    mediaItems: resolveMediaItems(this, processedParams.mediaItems?.items || []),
     tiktokSettings: buildTikTokSettings(this, 0),
   };
 
