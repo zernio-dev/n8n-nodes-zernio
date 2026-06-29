@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.2] - 2026-06-29
+
+### Changes
+- fix(posts): publish thread items + show Post ID for the Unpublish operation (#31)
+
+
 ## [0.7.1] - 2026-05-14
 
 ### Changes
