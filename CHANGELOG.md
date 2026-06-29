@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.8.0] - 2026-06-29
+
+### Changes
+- feat(posts): accept a dynamic media array via "Media Items (JSON)" (#32)
+
+
 ## [0.7.2] - 2026-06-29
 
 ### Changes
