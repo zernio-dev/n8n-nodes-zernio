@@ -229,10 +229,6 @@ export async function postsCreatePreSend(
   this: any,
   requestOptions: any
 ): Promise<any> {
-  const { processParametersWithExpressions } = await import(
-    "./expressionProcessor"
-  );
-
   // Process expressions in parameters that need it
   const processedParams = processParametersWithExpressions(
     "posts",
@@ -285,10 +281,6 @@ export async function postsUpdatePreSend(
   this: any,
   requestOptions: any
 ): Promise<any> {
-  const { processParametersWithExpressions } = await import(
-    "./expressionProcessor"
-  );
-
   const processedParams = processParametersWithExpressions(
     "posts",
     "update",

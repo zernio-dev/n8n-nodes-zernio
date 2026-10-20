@@ -43,7 +43,8 @@ export type LateResource =
   | "invites"
   | "logs"
   | "apiKeys"
-  | "users"  | "tools";
+  | "users"
+  | "tools";
 
 export const LATE_RESOURCES: LateResourceConfig[] = [
   {

@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master, main]
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Gagal kalau freeai/providers.generated.ts basi terhadap
+      # freeai/providers.json (keduanya di-commit). Perbaikan:
+      # npm run gen-providers, lalu commit hasilnya.
+      - name: Check provider list is not stale
+        run: npm run check-providers
+
+      # npm test membutuhkan dist/ (tes membaca hasil build).
+      - name: Build project
+        run: npm run build
+
+      - name: Run tests
+        run: npm test

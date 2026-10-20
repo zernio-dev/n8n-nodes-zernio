@@ -83,6 +83,19 @@ function evaluateStringExpression(
 }
 
 /**
+ * Quotes a static text segment as a JS single-quoted string, escaping
+ * backslashes, quotes and newlines so segments like "It's" produce a valid
+ * expression instead of silently failing evaluation.
+ */
+function quoteStatic(text: string): string {
+  return `'${text
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'")
+    .replace(/\r/g, "\\r")
+    .replace(/\n/g, "\\n")}'`;
+}
+
+/**
  * Converts legacy expression format to new format
  * Example: "=https://{{ $json.data.color }}.com" -> "={{ 'https://' + $json.data.color + '.com' }}"
  */
@@ -99,7 +112,7 @@ function convertLegacyExpression(str: string): string {
   while (i < withoutEquals.length) {
     if (withoutEquals.substring(i, i + 2) === "{{") {
       if (currentPart) {
-        parts.push(`'${currentPart}'`);
+        parts.push(quoteStatic(currentPart));
         currentPart = "";
       }
       inExpression = true;
@@ -121,7 +134,7 @@ function convertLegacyExpression(str: string): string {
     if (inExpression) {
       parts.push(currentPart.trim());
     } else {
-      parts.push(`'${currentPart}'`);
+      parts.push(quoteStatic(currentPart));
     }
   }
 
@@ -141,7 +154,7 @@ function convertToTemplateExpression(str: string): string {
   while (i < str.length) {
     if (str.substring(i, i + 2) === "{{") {
       if (currentPart) {
-        parts.push(`'${currentPart}'`);
+        parts.push(quoteStatic(currentPart));
         currentPart = "";
       }
       inExpression = true;
@@ -163,7 +176,7 @@ function convertToTemplateExpression(str: string): string {
     if (inExpression) {
       parts.push(currentPart.trim());
     } else {
-      parts.push(`'${currentPart}'`);
+      parts.push(quoteStatic(currentPart));
     }
   }
 

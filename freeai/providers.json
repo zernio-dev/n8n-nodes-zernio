@@ -1,0 +1,169 @@
+{
+  "_comment": "SATU sumber kebenaran daftar provider free-ai-probe. Dibaca oleh freeai.py, freeai_client.mjs, probe_free_ai.py, dan freeai_gateway.py (lewat freeai). Untuk menambah provider: tambahkan objek di 'providers', lalu id-nya di 'failover' (kalau ikut rantai gateway) dan/atau 'probe_order' (kalau mau ikut diprobe).",
+  "_fields": {
+    "id": "kunci provider, dipakai oleh chat(provider_id, ...) dan --provider",
+    "name": "label utama (freeai.py, klien Node, /v1/models, gateway)",
+    "probe_name": "opsional; label khusus probe_free_ai.py kalau berbeda dari name",
+    "base": "base URL OpenAI-compatible (endpoint chat = base + /chat/completions)",
+    "model": "model default provider",
+    "key_env": "nama env var berisi API key, atau null kalau anonim",
+    "optional_key": "opsional; true = probe pakai key kalau ada, jalan tanpa key kalau tidak (hanya dipakai probe)",
+    "core": "opsional; false = hanya ada di probe, tidak masuk registry freeai/klien/gateway"
+  },
+
+  "failover": [
+    "ovh",
+    "llm7",
+    "openrouter",
+    "tip",
+    "arzastore",
+    "cleanapis",
+    "netraux",
+    "jeroker"
+  ],
+
+  "bench_interval": {
+    "ovh": 31,
+    "llm7": 26,
+    "kilo": 12,
+    "openrouter": 4,
+    "tip": 6,
+    "arzastore": 6,
+    "cleanapis": 6,
+    "netraux": 6,
+    "jeroker": 6
+  },
+
+  "probe_order": [
+    "llm7",
+    "ovh",
+    "kilo",
+    "aion",
+    "groq",
+    "gemini",
+    "openrouter",
+    "mistral",
+    "siliconflow",
+    "netraux",
+    "jeroker"
+  ],
+
+  "providers": [
+    {
+      "id": "ovh",
+      "name": "OVHcloud AI Endpoints",
+      "probe_name": "OVHcloud AI Endpoints (anonim)",
+      "base": "https://oai.endpoints.kepler.ai.cloud.ovh.net/v1",
+      "model": "gpt-oss-20b",
+      "key_env": null
+    },
+    {
+      "id": "llm7",
+      "name": "LLM7.io",
+      "probe_name": "LLM7.io (anonim)",
+      "base": "https://api.llm7.io/v1",
+      "model": "DeepSeek-V4-Flash-0731",
+      "key_env": null
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter (free pool)",
+      "probe_name": "OpenRouter",
+      "base": "https://openrouter.ai/api/v1",
+      "model": "openrouter/free",
+      "key_env": "OPENROUTER_API_KEY"
+    },
+    {
+      "id": "tip",
+      "name": "TipRouter",
+      "base": "https://tiprouter.my.id/v1",
+      "model": "tip-auto/free",
+      "key_env": "TIP_API_KEY"
+    },
+    {
+      "id": "arzastore",
+      "name": "ArzaStore Router",
+      "base": "https://router.arzastore.com/v1",
+      "model": "arzastore-auto/free",
+      "key_env": "ARZASTORE_API_KEY"
+    },
+    {
+      "id": "cleanapis",
+      "name": "CleanAPIs",
+      "base": "https://cleanapis.com/v1",
+      "model": "cleanapis-auto/free",
+      "key_env": "CLEANAPIS_API_KEY"
+    },
+    {
+      "id": "netraux",
+      "name": "Netraux (Bansos GPT 6.1 SOL)",
+      "base": "https://ai.netraux.eu.cc/v1",
+      "model": "aws/gpt-6.1-sol",
+      "key_env": "NETRAUX_API_KEY"
+    },
+    {
+      "id": "jeroker",
+      "name": "Jerouter (Jeroker)",
+      "base": "https://je.jerouter.web.id/v1",
+      "model": "auto",
+      "key_env": "JEROKER_API_KEY"
+    },
+    {
+      "id": "ghrocx",
+      "name": "Ghrocx",
+      "base": "https://api.ghrocx.my.id/v1",
+      "model": "ghrocx/sonnet-5",
+      "key_env": "GHROCX_API_KEY"
+    },
+    {
+      "id": "kilo",
+      "name": "Kilo Code gateway",
+      "probe_name": "Kilo Code gateway (anonim)",
+      "base": "https://api.kilo.ai/api/gateway",
+      "model": "kilo-auto/free",
+      "key_env": null
+    },
+
+    {
+      "id": "aion",
+      "name": "Aion Labs",
+      "base": "https://api.aionlabs.ai/v1",
+      "model": "aion-labs/aion-3.0-mini",
+      "key_env": "AION_API_KEY",
+      "optional_key": true,
+      "core": false
+    },
+    {
+      "id": "groq",
+      "name": "Groq",
+      "base": "https://api.groq.com/openai/v1",
+      "model": "openai/gpt-oss-20b",
+      "key_env": "GROQ_API_KEY",
+      "core": false
+    },
+    {
+      "id": "gemini",
+      "name": "Google AI Studio (Gemini)",
+      "base": "https://generativelanguage.googleapis.com/v1beta/openai",
+      "model": "gemini-3.8-flash",
+      "key_env": "GEMINI_API_KEY",
+      "core": false
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral (free mode)",
+      "base": "https://api.mistral.ai/v1",
+      "model": "open-mistral-nemo",
+      "key_env": "MISTRAL_API_KEY",
+      "core": false
+    },
+    {
+      "id": "siliconflow",
+      "name": "SiliconFlow",
+      "base": "https://api.siliconflow.cn/v1",
+      "model": "Qwen/Qwen3-8B",
+      "key_env": "SILICONFLOW_API_KEY",
+      "core": false
+    }
+  ]
+}
