@@ -27,4 +27,3 @@ export { invitesResource } from "./invites";
 export { logsResource } from "./logs";
 export { apiKeysResource } from "./apiKeys";
 export { usersResource } from "./users";
-export { toolsResource } from "./tools";
