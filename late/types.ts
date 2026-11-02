@@ -43,7 +43,7 @@ export type LateResource =
   | "invites"
   | "logs"
   | "apiKeys"
-  | "users"  | "tools";
+  | "users";
 
 export const LATE_RESOURCES: LateResourceConfig[] = [
   {
@@ -183,11 +183,6 @@ export const LATE_RESOURCES: LateResourceConfig[] = [
     value: "users",
     description:
       "View users and team members with access to your account",
-  },
-  {
-    name: "Tools",
-    value: "tools",
-    description: "Manage tools",
   },
 ];
 
